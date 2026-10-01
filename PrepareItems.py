@@ -10,9 +10,9 @@
 import argparse, os, re
 import numpy as np, pandas as pd
  
-# ---------------------------------------------------------------- 0. configuration
+# --------- 0. configuration
 MODES = ["Cyclist", "Pedestrian", "Driver", "Motorcyclist"]
-ITEM = r"(rbf|nbv|sa|pa|sn|att|infra|pbc|hab|int|mr|aenf|cause|penf)\d+|psafe_\w+"   # Phase 1 item names
+ITEM = r"(rbf|nbv|sa|pa|sn|att|infra|pbc|hab|int|mr|aenf|cause|penf)\d+|psafe_\w+"   # cleaned data item names
 MIN_CELL = 5
 SHARED = ("mr", "aenf", "psafe_", "cause", "penf")  # identical wording in all four questionnaires -> common categories
  
@@ -51,7 +51,7 @@ for m in MODES:
     NOTES[(m, "mr3")] = "angry confrontation; weaker link to mr1/mr2, check loading in Step 10"
  
  
-# ---------------------------------------------------------------- 1. load Phase 1 output
+# ---------- 1. load cleaned data
 def load(mode, data_dir):
     d = pd.read_csv(os.path.join(data_dir, f"{mode}_model_data.csv"))
     d = d.drop(columns=[c for c in d.columns if c.endswith("_r")])
@@ -63,8 +63,8 @@ def load(mode, data_dir):
         raise SystemExit(f"{mode}_model_data.csv lacks {missing}; rename them in the configuration block")
     bad = [c for c in items if not d[c].dropna().isin(values(c)).all()]
     if bad:
-        raise SystemExit(f"{mode}: unexpected values in {bad}; run Phase 1 first")
-    acc = d["acc_total_rec"] if "acc_total_rec" in d else pd.Series(dtype=float)   # reconciled total from Phase 1
+        raise SystemExit(f"{mode}: unexpected values in {bad}; run data cleaning first")
+    acc = d["acc_total_rec"] if "acc_total_rec" in d else pd.Series(dtype=float)   # reconciled total from data cleaning
     return d, items, acc
  
  
@@ -72,7 +72,7 @@ def values(c):
     return [0, 1] if c.startswith("aenf") else [1, 2, 3, 4, 5]
  
  
-# ---------------------------------------------------------------- 2. merge rule
+# ---------- 2. merge rule
 def merge_map(counts):
     """Merge any category with < MIN_CELL answers into its neighbour nearer the scale centre."""
     groups = [[k] for k in counts.index]
@@ -87,7 +87,7 @@ def merge_map(counts):
     return {k: new for new, g in enumerate(groups, 1) for k in g}
  
  
-# ---------------------------------------------------------------- 3. run
+# ---------- 3. run
 def main(data_dir, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     data, maps, direc, cats, accs = {}, [], [], [], []

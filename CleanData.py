@@ -13,15 +13,15 @@ Respondents who failed the attention check are assumed to be already removed fro
 sheets. The script only records how many respondents each Persian raw sheet had versus the
 English sheet (sample_sizes.csv) for the data-cleaning report.
 
-Usage:  python clean_road_user_data.py --data_dir . --out_dir cleaned
 """
 import argparse, os, re, warnings
 import numpy as np
 import pandas as pd
-
+from openpyxl.utils import get_column_letter
+ 
 SKIP, MISS = -8, -9
 warnings.filterwarnings("ignore", category=pd.errors.PerformanceWarning)
-
+ 
 # English sheet, id prefix, Persian raw sheet (rows = questions, respondents from column D),
 # and the Persian rows that have no English column, with the reason.
 SURVEYS = {
@@ -41,7 +41,7 @@ SURVEY_YEAR = 1402
 MIN_LIC_AGE = 18        # minimum legal age for a car or motorcycle license
 # Years held that imply licensing before MIN_LIC_AGE are capped at age - MIN_LIC_AGE (licensed at 18).
 # Respondents younger than MIN_LIC_AGE who report a license get years held = missing.
-
+ 
 # Persian response labels (raw sheets, column C) -> English
 FA_EN = {
     "خانم": "female", "آقا": "male",
@@ -64,9 +64,22 @@ FA_EN = {
 # Checked against the data: 9 = youngest, 10 = oldest, 11 = all female, 4-6 = all drive daily.
 DRIVER_JOBS = ("1=unemployed; 2=government employee; 3=private-sector employee; 4=taxi driver; 5=bus driver; "
                "6=freight vehicle driver; 7=self-employed; 8=laborer; 9=student; 10=retired; 11=homemaker")
+# Education: ordinal, codes 1-2 (no formal education, primary) merged because they are rare in every group.
+EDU_ORD = {1: 1, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5}
+EDU_ORD_LABELS = "1=primary or less; 2=middle school; 3=high-school diploma; 4=bachelor's; 5=master's or higher"
+# Occupation: shared broad groups for all four groups. Professional drivers (Driver codes 4-6) and
+# motorcycle couriers are own-account / manual work and go with self-employed or laborer.
+JOB_GROUPS = ["employed", "self_employed_laborer", "student", "not_working"]
+E, S, T, N = JOB_GROUPS
+JOB_GROUP = {"Cyclist":      {1: N, 2: S, 3: S, 4: E, 5: E, 6: T, 7: T, 8: N, 9: N},
+             "Motorcyclist": {1: N, 2: S, 3: S, 4: S, 5: E, 6: E, 7: T, 8: T, 9: N},
+             "Driver":       {1: N, 2: E, 3: E, 4: S, 5: S, 6: S, 7: S, 8: S, 9: T, 10: N, 11: N}}
+JOB_GROUP["Pedestrian"] = JOB_GROUP["Cyclist"]
+# Blocks checked for straight-lining (identical answers on every item of the block)
+SL_BLOCKS = ["rbf", "nbv", "sa", "pa", "sn", "att", "pbc", "hab", "int", "mr"]
 DEMOGRAPHICS = {"gender": "1=female; 2=male", "edu": ("1=no formal education; 2=primary school; 3=middle school; "
                 "4=high-school diploma; 5=bachelor's degree; 6=master's degree or higher")}
-
+ 
 # construct tag in the header's last "(...)" -> (code, construct, scale)
 AGREE = "1=strongly disagree ... 5=strongly agree"
 CONSTRUCTS = {
@@ -97,8 +110,8 @@ PLAIN = {"car license?": "Lyear", "Do you use a bicycle for shopping?": "purp_sh
          "Do you use a bicycle for traveling to school or university?": "purp_school", "Do you use a personal bicycle?": "bike_personal",
          "Do you use a shared bicycle (e.g., Bikeshare systems)?": "bike_shared",
          "Do you use both a personal and a shared bicycle?": "bike_both"}
-
-
+ 
+ 
 def short_name(header, counter):
     """Short code from an English header, e.g. '... (perceived behavioral control3)' -> 'pbc3'."""
     h = str(header).strip()
@@ -113,12 +126,12 @@ def short_name(header, counter):
     if code == "psafe": return f"psafe_{PSAFE_MODES[n - 1]}"
     if code == "att" and n >= 7: return f"infra{ {7: 1, 8: 2, 9: 3, 11: 4}[n] }"   # sidewalk/street items
     return f"{code}{n}"
-
-
+ 
+ 
 def scale_items(cols):
     return [c for c in cols if re.match(r"(bf_|psafe_|(rbf|nbv|sa|pa|sn|att|infra|pbc|hab|int|mr|aenf|cause|penf)\d+$)", c)]
-
-
+ 
+ 
 def translate_coding(fa):
     """Persian coding cell -> English value labels, e.g. 'خانم = 1 | آقا = 2' -> '1=female; 2=male'."""
     out = []
@@ -130,8 +143,8 @@ def translate_coding(fa):
     if out:
         return " ... ".join(out) if rng else "; ".join(out)
     return "1-5 as marked (direction not stated)" if "1 تا 5" in str(fa) else "number as written"
-
-
+ 
+ 
 def persian_codebook(mode, path, n_cols):
     """Align the Persian sheet to the English columns; return per-column Persian info and unused rows."""
     _, _, raw_sheet, skip = SURVEYS[mode]
@@ -145,8 +158,8 @@ def persian_codebook(mode, path, n_cols):
     used = [r for r in raw.index if r not in skip][:n_cols]
     unused = raw.drop(index=used).assign(reason=lambda d: [skip.get(r, "not in English sheet") for r in d.index])
     return raw.loc[used].reset_index(drop=True), unused[["q_no", "question_fa", "coding_fa", "reason"]]
-
-
+ 
+ 
 def apply_rules(df, cols, rules, log):
     """Apply (mask, new value, reason) rules in order (first match wins) and log every change."""
     done = pd.DataFrame(False, index=df.index, columns=cols)
@@ -156,8 +169,8 @@ def apply_rules(df, cols, rules, log):
         log += [(df.resp_id.iat[i], cols[j], df[cols[j]].iat[i], value, reason) for i, j in zip(r, c)]
         df[cols] = df[cols].mask(mask, value)
         done |= mask
-
-
+ 
+ 
 def sample_sizes(mode, data_dir, n_english):
     """Respondents in the Persian raw sheet (non-empty columns from D) vs the English sheet."""
     raw_sheet = SURVEYS[mode][2]
@@ -169,8 +182,39 @@ def sample_sizes(mode, data_dir, n_english):
     return dict(mode=mode, raw_persian_n=n_raw, english_n=n_english, removed=n_raw - n_english,
                 pct_removed=round(100 * (n_raw - n_english) / n_raw, 1),
                 note="English sheet assumed to exclude attention-check failures")
-
-
+ 
+ 
+def raw_numbering(mode, data_dir):
+    """Questionnaire numbers in the Persian sheet header: empty, unnumbered, repeated, missing, identical."""
+    raw_sheet = SURVEYS[mode][2]
+    if raw_sheet is None:
+        return pd.DataFrame()
+    raw = pd.read_excel(os.path.join(data_dir, f"{mode}.xlsx"), sheet_name=raw_sheet, header=None)
+    hdr = raw.iloc[0, 3:].reset_index(drop=True)
+    hdr = hdr.map(lambda h: str(int(h)) if isinstance(h, float) and h == int(h) else str(h).strip())
+    num = pd.to_numeric(hdr.str.extract(r"^(?:پرسشنامه شماره:\s*)?(\d+)$")[0], errors="coerce")
+    answers = raw.iloc[1:, 3:].apply(pd.to_numeric, errors="coerce").T.reset_index(drop=True)
+    key = answers.apply(lambda r: "|".join(map(str, r.tolist())), axis=1)
+    col = [get_column_letter(j + 4) for j in range(len(hdr))]
+    near = [f"between {hdr[j - 1] if j else '-'} and {hdr[j + 1] if j + 1 < len(hdr) else '-'}" for j in range(len(hdr))]
+    rows = []
+    for j in range(len(hdr)):
+        if answers.iloc[j].notna().sum() == 0:
+            rows.append((col[j], hdr[j], "empty column (no answers)", near[j]))
+        if pd.isna(num[j]):
+            rows.append((col[j], hdr[j], "no questionnaire number", near[j]))
+        elif (num == num[j]).sum() > 1:
+            rows.append((col[j], hdr[j], "questionnaire number repeated", near[j]))
+        twins = [hdr[k] for k in key.index[(key == key[j]) & (key.index != j)] if answers.iloc[j].notna().any()]
+        if twins:
+            rows.append((col[j], hdr[j], "identical answers to questionnaire " + ", ".join(map(str, twins)), near[j]))
+    in_seq = num[num <= len(hdr)]
+    rows += [("", int(n), "questionnaire number missing from the sequence", "")
+             for n in sorted(set(range(1, int(in_seq.max()) + 1)) - set(in_seq.astype(int)))]
+    rows += [(col[j], hdr[j], "number outside the sequence", near[j]) for j in num.index[num > len(hdr)]]
+    return pd.DataFrame(rows, columns=["excel_column", "questionnaire", "issue", "position"]).assign(mode=mode)
+ 
+ 
 def license(df, kind, years, log, has=None):
     """'no' or 0 = no license. Adds {kind}_lic, _lic_years, _lic_age (age when licensed) and _lic_issue.
     Years: -8 without license, -9 when the yes/no answer and the year field conflict.
@@ -199,8 +243,8 @@ def license(df, kind, years, log, has=None):
                          "years_held_reported": y, "year_obtained_iranian": SURVEY_YEAR - y,
                          "age_when_licensed_reported": age_at, "issue": issue, "action": action,
                          "years_held_cleaned": capped.where(ok)})[issue != ""]
-
-
+ 
+ 
 def clean(mode, data_dir):
     sheet, prefix, _, _ = SURVEYS[mode]
     path = os.path.join(data_dir, f"{mode}.xlsx")
@@ -211,7 +255,7 @@ def clean(mode, data_dir):
     df = src.set_axis(names, axis=1)
     df.insert(0, "resp_id", [f"{prefix}{i:03d}" for i in range(1, len(df) + 1)])
     log = []
-
+ 
     # 1. scale items -------------------------------------------------------------------
     items = scale_items(df.columns)
     X = df[items].apply(pd.to_numeric, errors="coerce")
@@ -228,7 +272,7 @@ def clean(mode, data_dir):
     df[items] = df[items].astype(int)
     aenf = list(is_aenf[is_aenf].index)
     df[aenf] = df[aenf].replace({2: 0})                      # 1=agree, 2=disagree -> 1/0
-
+ 
     # 2. licenses ----------------------------------------------------------------------
     if mode == "Motorcyclist":
         lic_check = pd.concat([license(df, kind, df.pop(yr), log, df.pop(yn).map({1: 0, 2: 1}))
@@ -237,7 +281,7 @@ def clean(mode, data_dir):
         lic_check = license(df, "car", df.pop("Lyear"), log)
     jobs = DRIVER_JOBS if mode == "Driver" else fa.coding_en[names.index("job")]
     df["job_label"] = df.job.map({int(k): v for k, v in re.findall(r"(\d+)=([^;]+)", jobs)})
-
+ 
     # 3. mode use, accidents, reversed items, respondent flags ---------------------------
     df[ACC] = df[ACC].apply(pd.to_numeric, errors="coerce").fillna(MISS).astype(int)
     parts, total = df[ACC[1:]].clip(lower=0).sum(axis=1), df.acc_total
@@ -257,13 +301,63 @@ def clean(mode, data_dir):
         "straightline": (df[agree_items].where(df[agree_items] > 0).std(axis=1) == 0).astype(int),
         "dup_of": first.where(first != df.resp_id, ""),
     }
+    new |= careless(df, items, mode) | demographics(df, mode)
     df = pd.concat([df, pd.DataFrame(new, index=df.index)], axis=1)
     log = pd.DataFrame(log, columns=["resp_id", "variable", "old_value", "new_value", "reason"])
     fa.index = names
     return df.copy(), codebook(mode, df, dict(zip(names, src.columns)), fa), log, lic_check, unused
-
-
+ 
+ 
+def careless(df, items, mode):
+    """Straight-lining per block, contradictory straight-lining across opposite-worded items, longstring."""
+    X = df[items].where(df[items] > 0)
+    blocks = {b: [c for c in items if re.match(rf"{b}\d+$", c)] for b in SL_BLOCKS}
+    flat = pd.DataFrame({b: (X[c].nunique(axis=1) == 1) & (X[c].count(axis=1) >= 3)
+                         for b, c in blocks.items() if len(c) >= 3})
+    opposite = pd.Series(False, index=df.index)
+    for c in REVERSE[mode]:                                   # same non-neutral answer on items of opposite wording
+        b = re.match(r"[a-z]+", c).group()
+        opposite |= flat[b] & (X[c] != 3)
+    scale = [c for c in items if not c.startswith("aenf")]   # 1-5 items in questionnaire order
+    def longest_run(row):
+        best = run = 0; prev = None
+        for v in row:
+            run = run + 1 if v == prev and v == v else 1
+            best, prev = max(best, run), v
+        return best
+    return {"sl_blocks": flat.sum(axis=1),
+            "sl_block_names": flat.apply(lambda r: ", ".join(r.index[r]), axis=1),
+            "sl_opposite": opposite.astype(int),
+            "longstring": X[scale].apply(longest_run, axis=1, raw=True)}
+ 
+ 
+def demographics(df, mode):
+    """Gender 0/1, ordinal education with 1-2 merged, shared occupation groups and dummies."""
+    group = df.job.map(JOB_GROUP[mode])
+    out = {"female": (df.gender == 1).astype(int), "edu_ord": df.edu.map(EDU_ORD), "job_group": group}
+    out |= {f"job_{g}": (group == g).astype(int) for g in JOB_GROUPS}
+    if mode == "Driver":
+        out["professional_driver"] = df.job.isin([4, 5, 6]).astype(int)
+    lic = [c for c in ("car_lic", "motor_lic") if c in df]
+    out["lic_under_age"] = ((df.age < MIN_LIC_AGE) & (df[lic] == 1).any(axis=1)).astype(int)
+    return out
+ 
+ 
 NOTES = {
+    "female": "1=female; 0=male (from gender: 1=female, 2=male)",
+    "edu_ord": EDU_ORD_LABELS + " (ordinal; codes 1-2 merged)",
+    "job_group": "shared occupation group: employed (government, private sector); self_employed_laborer "
+                 "(self-employed, laborer, motorcycle courier, taxi/bus/freight driver); student; "
+                 "not_working (unemployed, retired, homemaker)",
+    "job_employed": "1 = employed (government or private sector)",
+    "job_self_employed_laborer": "1 = self-employed, laborer, courier or professional driver",
+    "job_student": "1 = university or school student", "job_not_working": "1 = unemployed, retired or homemaker",
+    "professional_driver": "Driver only: 1 = taxi, bus or freight vehicle driver (job 4-6)",
+    "lic_under_age": f"1 = reports a license but is younger than {MIN_LIC_AGE}",
+    "sl_blocks": "number of blocks (rbf, nbv, sa, pa, sn, att, pbc, hab, int, mr) answered identically",
+    "sl_block_names": "blocks answered identically",
+    "sl_opposite": "1 = same non-neutral answer on a block that contains an opposite-worded item",
+    "longstring": "longest run of identical consecutive answers across the 1-5 items",
     "bf_": "Persian wording: usual frequency under normal conditions (before the COVID-19 outbreak)",
     "rbf": "Past month", "sa": "Asks about people in Shiraz", "pa": "Asks about the respondent personally",
     "purp_": "1 = selected, 0 = not selected (multiple choice in the Persian form)",
@@ -284,12 +378,12 @@ NOTES = {
     "dup_of": "resp_id of an identical earlier row",
     "_lic_years": f"survey year - year obtained (Iranian calendar), capped at age - {MIN_LIC_AGE}; -8 no license, -9 missing/conflict",
 }
-
-
+ 
+ 
 FIXED_DIRECTION = {"psafe": "1=very unsafe ... 5=very safe", "cause": "1=not important ... 5=very important",
                    "penf": "1=very unlikely ... 5=very likely"}   # Persian sheet only says "enter 1 to 5"
-
-
+ 
+ 
 def codebook(mode, df, original, fa):
     rows = []
     for c in df.columns:
@@ -311,25 +405,30 @@ def codebook(mode, df, original, fa):
                      p.get("q_no", ""), p.get("question_fa", ""), p.get("coding_fa", "")))
     return pd.DataFrame(rows, columns=["variable", "construct", "question_en", "coding", "note",
                                        "block_fa", "question_fa", "coding_fa"]).fillna("")
-
-
-def export(mode, df, cb, log, lic_check, unused, out_dir):
+ 
+ 
+DEMO_COLS = ["resp_id", "female", "age", "minor", "edu_ord", "job_group"] + [f"job_{g}" for g in JOB_GROUPS] + \
+            ["professional_driver", "car_lic", "car_lic_years", "motor_lic", "motor_lic_years"]
+ 
+ 
+def export(mode, df, cb, log, lic_check, unused, raw_num, out_dir):
     num = df.select_dtypes("number").columns
     model = df.copy()
     model[num] = model[num].mask(model[num].isin([SKIP, MISS]))
-    flags = [c for c in ["minor", "straightline", "acc_extreme"] if c in df]
+    flags = [c for c in ["minor", "lic_under_age", "straightline", "sl_opposite", "acc_extreme", "professional_driver"] if c in df]
     issues = lic_check.groupby(["license", "issue"]).size()
     summary = pd.DataFrame({"flag": flags + ["dup_of", "acc_check != ok"] + [f"{k}_lic: {i}" for k, i in issues.index],
                             "n": [int((df[f] == 1).sum()) for f in flags]
                                  + [int((df.dup_of != "").sum()), int((df.acc_check != "ok").sum())] + list(issues)})
     with pd.ExcelWriter(os.path.join(out_dir, f"{mode}_clean.xlsx")) as w:
         for name, d in [("model_data", model), ("coded_data", df), ("codebook", cb), ("cleaning_log", log),
-                        ("flag_summary", summary), ("license_check", lic_check), ("persian_rows_not_used", unused)]:
+                        ("flag_summary", summary), ("license_check", lic_check), ("persian_rows_not_used", unused),
+                        ("raw_numbering", raw_num)]:
             d.to_excel(w, sheet_name=name, index=False)
     model.to_csv(os.path.join(out_dir, f"{mode}_model_data.csv"), index=False)
     return summary
-
-
+ 
+ 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--data_dir", default="SurveyData")
@@ -338,14 +437,21 @@ if __name__ == "__main__":
     args = ap.parse_args()
     SURVEY_YEAR = args.survey_year
     os.makedirs(args.out_dir, exist_ok=True)
-    sizes, checks = [], []
+    sizes, checks, numbering, demo = [], [], [], []
     for mode in SURVEYS:
         df, cb, log, lic_check, unused = clean(mode, args.data_dir)
-        s = export(mode, df, cb, log, lic_check, unused, args.out_dir)
-        checks.append(lic_check.assign(mode=mode))
+        raw_num = raw_numbering(mode, args.data_dir)
+        s = export(mode, df, cb, log, lic_check, unused, raw_num, args.out_dir)
+        checks.append(lic_check.assign(mode=mode)); numbering.append(raw_num)
+        demo.append(df.reindex(columns=DEMO_COLS).assign(mode=mode))
         sizes.append(sample_sizes(mode, args.data_dir, len(df)))
         print(f"{mode}: n={len(df)}, changes={len(log)}, " + ", ".join(f"{f}={n}" for f, n in s.values))
     sizes = pd.DataFrame(sizes).astype({"raw_persian_n": "Int64", "removed": "Int64"})
     sizes.to_csv(os.path.join(args.out_dir, "sample_sizes.csv"), index=False)
     print(sizes.to_string(index=False))
     pd.concat(checks).to_csv(os.path.join(args.out_dir, "license_check.csv"), index=False)
+    pd.concat(numbering).to_csv(os.path.join(args.out_dir, "raw_numbering_check.csv"), index=False)
+    demo = pd.concat(demo)                                     # cross-mode file with shared groups
+    num = demo.select_dtypes("number").columns
+    demo[num] = demo[num].mask(demo[num].isin([SKIP, MISS]))
+    demo[["mode"] + DEMO_COLS].to_csv(os.path.join(args.out_dir, "demographics_all_modes.csv"), index=False)

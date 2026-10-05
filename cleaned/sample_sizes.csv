@@ -1,5 +1,0 @@
-mode,raw_persian_n,english_n,removed,pct_removed,note
-Cyclist,295,249,46,15.6,English sheet assumed to exclude attention-check failures
-Pedestrian,464,379,85,18.3,English sheet assumed to exclude attention-check failures
-Driver,,399,,,No Persian raw sheet in Driver.xlsx
-Motorcyclist,233,206,27,11.6,English sheet assumed to exclude attention-check failures

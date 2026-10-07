@@ -38,15 +38,11 @@ dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 # 2. Helpers
 read_group <- function(g) { # read the ready file for one group, filter by sample_def
-  f <- list.files(data_dir, pattern = paste0("^", g, "_items_ready.*\\.csv$"),
-                  full.names = TRUE)
-  if (length(f) == 0) stop("No ready file for ", g, " in '", data_dir, "'")
+  f <- list.files(data_dir, pattern = paste0("^", g, "_items_ready.*\\.csv$"), full.names = TRUE)
   d <- read.csv(f[1], na.strings = c("", "NA"), fileEncoding = "UTF-8-BOM")
   n0 <- nrow(d)
   if (sample_def %in% c("no_dups", "adults")) d <- d[is.na(d$dup_of), ]
   if (sample_def == "adults")                 d <- d[!is.na(d$age) & d$age >= 18, ]
-  cat(sprintf("\n==== %s: %d of %d rows (sample = %s) ====\n",
-              g, nrow(d), n0, sample_def))
   d
 }
 
@@ -55,7 +51,7 @@ find_factors <- function(dat) {
   fs <- list()
   for (nm in names(factor_prefix)) {
     p   <- factor_prefix[[nm]]
-    its <- grep(paste0("^", p, "[0-9]+$"), names(dat), value = TRUE)
+    its <- grep(paste0("^", p, "[0-9]+$"), names(dat), value = TRUE) # items with that prefix
     if (length(its) >= min_items) {
       its <- its[order(as.numeric(sub(p, "", its)))]
       fs[[nm]] <- its
@@ -183,11 +179,12 @@ mi_rows <- function(fit, g, label, top = 20) {
 }
 
 # ---- 3. Run -----------------------------------------------------------
-all_fit <- list()
 
 for (g in groups) {
   dat <- read_group(g)
   fs  <- find_factors(dat)
+  g_dir <- file.path(out_dir, g)
+  dir.create(g_dir, showWarnings = FALSE, recursive = TRUE)
   cat("Factors:", paste(sprintf("%s(%d)", names(fs), lengths(fs)), collapse = "  "), "\n")
 
   res <- list(fit = list(), load = list(), rel = list(), fcor = list(),
@@ -227,9 +224,11 @@ for (g in groups) {
   if (run_all_factors) record("all_factors", fs)
 
   bind <- function(x) if (length(x)) do.call(rbind, x) else NULL
-  write_out <- function(x, name)
-    if (!is.null(x)) write.csv(x, file.path(out_dir, paste0(g, "_", name, ".csv")),
-                               row.names = FALSE)
+  write_out <- function(x, name) {
+    if (!is.null(x)) {
+      write.csv(x, file.path(g_dir, paste0(name, ".csv")), row.names = FALSE)
+    }
+  }
   fit_tab <- bind(res$fit)
   write_out(fit_tab,         "fit")
   write_out(bind(res$load),  "loadings")
@@ -237,7 +236,6 @@ for (g in groups) {
   write_out(bind(res$fcor),  "factor_cor")
   write_out(bind(res$htmt),  "htmt")
   write_out(bind(res$mi),    "modindices")
-  all_fit[[g]] <- fit_tab
 
   # console summary
   s <- bind(res$load)
@@ -261,6 +259,4 @@ for (g in groups) {
   if (nrow(mf)) print(format(mf, digits = 3), row.names = FALSE)
 }
 
-write.csv(do.call(rbind, all_fit), file.path(out_dir, "all_groups_fit.csv"),
-          row.names = FALSE)
 cat("\nResults written to", normalizePath(out_dir), "\n")

@@ -1,0 +1,196 @@
+mode,item,construct,behaviour,wording
+Cyclist,rbf8,RBF,alert,"In the past month, how often did you cycle while drowsy or not fully alert?"
+Cyclist,sa6,SA,alert,How acceptable is it for people in your city to cycle while drowsy or not fully alert?
+Cyclist,pa6,PA,alert,How acceptable is it for you personally if a cyclist cycles while drowsy or not fully alert?
+Cyclist,sn1,SN,alert,Most of my friends may cycle when not fully alert.
+Cyclist,att1,ATT,alert,"If the destination is nearby, being unalert while cycling is not very dangerous."
+Cyclist,pbc1,PBC,alert,I am a skilled cyclist and can manage even when not fully alert.
+Cyclist,hab1,HAB,alert,I am often not fully alert while cycling.
+Cyclist,int1,INT,alert,I plan to cycle only when fully alert in the next month.
+Cyclist,rbf6,RBF,speed,"In the past month, how often did you cycle at unsafe speeds?"
+Cyclist,sa1,SA,speed,How acceptable is it for people in your city to cycle at unsafe speeds?
+Cyclist,pa1,PA,speed,How acceptable is it for you personally if a cyclist cycles at unsafe speeds?
+Cyclist,sn2,SN,speed,Most of my friends may cycle at unsafe speeds in residential areas.
+Cyclist,att2,ATT,speed,Cycling at lower speeds feels like wasting time.
+Cyclist,att3,ATT,speed,Cycling at slow speeds is boring.
+Cyclist,pbc2,PBC,speed,I am confident I can control my bike at any speed.
+Cyclist,pbc3,PBC,speed,I can take sharp turns at high speed.
+Cyclist,hab2,HAB,speed,I usually cycle at speeds above what is safe.
+Cyclist,hab3,HAB,speed,I often take sharp turns on streets at high speeds.
+Cyclist,int2,INT,speed,I will make every effort to cycle at safe speeds in the next month.
+Cyclist,rbf3,RBF,phone,"In the past month, how often did you check mobile messages or use social media while cycling?"
+Cyclist,sa4,SA,phone,How acceptable is it for people in your city to talk on a mobile phone while cycling?
+Cyclist,sa5,SA,phone,How acceptable is it for people in your city to check mobile messages while cycling?
+Cyclist,pa4,PA,phone,How acceptable is it for you personally if a cyclist talks on a mobile phone or uses a hands-free device while cycling?
+Cyclist,pa5,PA,phone,How acceptable is it for you personally if a cyclist checks mobile messages while cycling?
+Cyclist,sn5,SN,phone,Most of my friends use mobile phones while cycling.
+Cyclist,att5,ATT,phone,"I always want to answer my phone immediately, even while cycling."
+Cyclist,att6,ATT,phone,"To save time, I sometimes use my mobile phone while cycling."
+Cyclist,pbc4,PBC,phone,I am sure nothing will happen if I check messages while cycling.
+Cyclist,pbc5,PBC,phone,I can respond to messages and cycle simultaneously.
+Cyclist,pbc6,PBC,phone,I can cycle safely while talking on the phone.
+Cyclist,hab4,HAB,phone,I frequently write messages while cycling.
+Cyclist,hab5,HAB,phone,I often talk on the phone while cycling.
+Cyclist,hab6,HAB,phone,I often check mobile messages while cycling.
+Cyclist,int3,INT,phone,I plan to never use a mobile phone while cycling in the next month.
+Cyclist,rbf1,RBF,helmet,"In the past month, how often did you not wear a helmet while cycling?"
+Cyclist,sa2,SA,helmet,How acceptable is it for people in your city to not wear a helmet?
+Cyclist,pa2,PA,helmet,How acceptable is it for you personally if a cyclist does not wear a helmet?
+Cyclist,sn3,SN,helmet,Most of my friends do not wear helmets while cycling.
+Cyclist,att4,ATT,helmet,Using a helmet is unnecessary for short trips.
+Cyclist,pbc7,PBC,helmet,I can cycle without a helmet and reach my destination without issues.
+Cyclist,hab7,HAB,helmet,I usually do not wear a helmet while cycling.
+Cyclist,int4,INT,helmet,I intend to always wear a helmet while cycling in the next month.
+Cyclist,rbf5,RBF,passenger,"In the past month, how often did you carry a passenger on your bike?"
+Cyclist,sa3,SA,passenger,How acceptable is it for people in your city to carry more than one passenger on a bike?
+Cyclist,pa3,PA,passenger,How acceptable is it for you personally if a cyclist carries more than one passenger on their bike?
+Pedestrian,rbf3,RBF,redlight,"In the past month, while walking, how often did you cross the street without paying attention to pedestrian signals?"
+Pedestrian,sa1,SA,redlight,How acceptable is it for people in your city to cross the street when the pedestrian light is red?
+Pedestrian,pa1,PA,redlight,How acceptable is it for you personally if a pedestrian crosses the street when the pedestrian light is red?
+Pedestrian,sn1,SN,redlight,Most of my friends cross the street when the pedestrian light is red.
+Pedestrian,att1,ATT,redlight,"If there are few vehicles, stopping at a red pedestrian light is unnecessary."
+Pedestrian,att5,ATT,redlight,Waiting at a pedestrian light feels like wasting time
+Pedestrian,pbc2,PBC,redlight,I can safely cross the street even when the pedestrian light is red.
+Pedestrian,hab1,HAB,redlight,I often cross the street when the pedestrian light is red.
+Pedestrian,int1,INT,redlight,I plan to cross the street only when the pedestrian light is green in the next month.
+Pedestrian,rbf4,RBF,crosswalk,"In the past month, while walking, how often did you cross the street where no crosswalk was present?"
+Pedestrian,sa2,SA,crosswalk,How acceptable is it for people in your city to cross the street where no crosswalk is present?
+Pedestrian,pa2,PA,crosswalk,How acceptable is it for you personally if a pedestrian crosses the street where no crosswalk is present?
+Pedestrian,sn3,SN,crosswalk,Most of my friends do not use crosswalks while crossing the street.
+Pedestrian,att4,ATT,crosswalk,Using crosswalks while crossing the street is unnecessary.
+Pedestrian,pbc5,PBC,crosswalk,I can cross the street safely at any point I choose.
+Pedestrian,hab2,HAB,crosswalk,I often cross the street where no crosswalk is present.
+Pedestrian,int2,INT,crosswalk,I will make every effort to always use crosswalks in the next month.
+Pedestrian,rbf2,RBF,phone,"In the past month, while walking, how often did you check mobile messages or browse social media?"
+Pedestrian,sa5,SA,phone,How acceptable is it for people in your city to talk on or check their mobile phone while crossing the street?
+Pedestrian,pa5,PA,phone,How acceptable is it for you personally if a pedestrian talks on or checks their mobile phone while crossing the street?
+Pedestrian,sn2,SN,phone,Most of my friends talk on or check their mobile phone while crossing the street.
+Pedestrian,att2,ATT,phone,"I always want to answer my mobile phone immediately, even while crossing the street."
+Pedestrian,pbc3,PBC,phone,I am sure nothing will happen if I check mobile messages while crossing the street.
+Pedestrian,pbc4,PBC,phone,I can cross the street and talk on my mobile phone simultaneously.
+Pedestrian,hab3,HAB,phone,I frequently talk on my mobile phone while crossing the street.
+Pedestrian,hab4,HAB,phone,I often check or write messages on my mobile phone while crossing the street.
+Pedestrian,int3,INT,phone,I intend to never use my mobile phone while crossing the street in the next month.
+Pedestrian,rbf5,RBF,night,"In the past month, while walking, how often did you walk at night without wearing light-colored clothing?"
+Pedestrian,sa6,SA,night,How acceptable is it for people in your city to walk at night without wearing light-colored clothing?
+Pedestrian,pa6,PA,night,How acceptable is it for you personally if a pedestrian walks at night without wearing light-colored clothing?
+Pedestrian,sn4,SN,night,Most of my friends wear light-colored clothing when walking at night.
+Pedestrian,att6,ATT,night,Wearing light-colored clothing at night is unnecessary.
+Pedestrian,hab5,HAB,night,I usually don’t wear light-colored clothing when walking at night.
+Pedestrian,int4,INT,night,I plan to wear light-colored clothing when walking at night in the next month.
+Pedestrian,rbf7,RBF,gap,"In the past month, while walking, how often did you cross between closely spaced vehicles?"
+Pedestrian,sa4,SA,gap,How acceptable is it for people in your city to cross between closely spaced vehicles?
+Pedestrian,pa4,PA,gap,How acceptable is it for you personally if a pedestrian crosses between closely spaced vehicles?
+Pedestrian,att3,ATT,gap,Crossing the street between closely spaced vehicles is not dangerous.
+Pedestrian,pbc1,PBC,gap,I am confident I can cross the street safely no matter how many cars are passing.
+Pedestrian,rbf6,RBF,street,"In the past month, while walking, how often did you walk on the street instead of the sidewalk?"
+Pedestrian,sa3,SA,street,How acceptable is it for people in your city to walk on the street instead of the sidewalk?
+Pedestrian,pa3,PA,street,How acceptable is it for you personally if a pedestrian walks on the street instead of the sidewalk?
+Pedestrian,rbf8,RBF,bridge,"In the past month, while walking, how often did you cross the street at ground level instead of using a pedestrian bridge?"
+Pedestrian,sa7,SA,bridge,How acceptable is it for people in your city to cross the street at ground level instead of using a pedestrian bridge?
+Pedestrian,pa7,PA,bridge,How acceptable is it for you personally if a pedestrian crosses the street at ground level instead of using a pedestrian bridge?
+Driver,rbf6,RBF,alert,"In the Past Month, while driving, how often did you drive while drowsy or not fully alert?"
+Driver,sa1,SA,alert,How acceptable is it for people in your city to drive while drowsy or not fully alert?
+Driver,pa1,PA,alert,How acceptable is it for you personally if a driver drives while drowsy or not fully alert?
+Driver,sn1,SN,alert,Most of my friends may drive when not fully alert.
+Driver,att1,ATT,alert,"If the destination is nearby, being unalert while driving is not very dangerous."
+Driver,pbc1,PBC,alert,I am a skilled driver and can manage driving even when unalert.
+Driver,hab1,HAB,alert,I am often not fully alert while driving.
+Driver,int1,INT,alert,I plan to drive only when fully alert in the next month.
+Driver,rbf1,RBF,speed,"In the Past Month, while driving, how often did you exceed safe speed limits in residential areas (30 km/h)?"
+Driver,rbf2,RBF,speed,"In the Past Month, while driving, how often did you exceed safe speed limits on streets or highways (over 60 km/h)?"
+Driver,sa2,SA,speed,How acceptable is it for people in your city to exceed safe speed limits in residential areas (30 km/h)?
+Driver,sa3,SA,speed,How acceptable is it for people in your city to exceed safe speed limits on streets or highways (over 60 km/h)?
+Driver,pa2,PA,speed,How acceptable is it for you personally if a driver exceeds safe speed limits in residential areas (30 km/h)?
+Driver,pa3,PA,speed,How acceptable is it for you personally if a driver exceeds safe speed limits on streets or highways (over 60 km/h)?
+Driver,sn2,SN,speed,Most of my friends may drive above 30 km/h in residential areas.
+Driver,att2,ATT,speed,Driving at a lower speed feels like wasting time.
+Driver,att3,ATT,speed,Driving at the speed limit is boring.
+Driver,pbc2,PBC,speed,I can control the car regardless of my speed.
+Driver,pbc3,PBC,speed,I can take sharp turns at high speed.
+Driver,hab2,HAB,speed,I usually drive over the speed limit.
+Driver,hab3,HAB,speed,I often take sharp turns on streets as if I were in a rally.
+Driver,int2,INT,speed,I will make every effort to obey speed limits in the next month.
+Driver,rbf4,RBF,phone,"In the Past Month, while driving, how often did you talk on a mobile phone or use a hands-free device?"
+Driver,rbf5,RBF,phone,"In the Past Month, while driving, how often did you check messages or browse social media?"
+Driver,sa6,SA,phone,How acceptable is it for people in your city to talk on a mobile phone while driving?
+Driver,sa7,SA,phone,How acceptable is it for people in your city to check mobile messages while driving?
+Driver,pa6,PA,phone,How acceptable is it for you personally if a driver talks on a mobile phone while driving?
+Driver,pa7,PA,phone,How acceptable is it for you personally if a driver checks messages while driving?
+Driver,att5,ATT,phone,"I always want to answer my mobile phone immediately, even while driving."
+Driver,att6,ATT,phone,"To save time, I sometimes use my mobile phone while driving."
+Driver,pbc4,PBC,phone,I am confident nothing will happen if I check messages while driving.
+Driver,pbc5,PBC,phone,I can respond to messages and drive simultaneously.
+Driver,pbc6,PBC,phone,I can talk on the phone and drive safely at the same time.
+Driver,hab4,HAB,phone,I frequently write messages while driving.
+Driver,hab5,HAB,phone,I often talk on the phone while driving.
+Driver,hab6,HAB,phone,I often check mobile messages while driving.
+Driver,int3,INT,phone,I plan to never use a mobile phone while driving in the next month.
+Driver,rbf3,RBF,belt,"In the Past Month, while driving, how often did you not wear a seatbelt?"
+Driver,sa4,SA,belt,How acceptable is it for people in your city to not wear a seatbelt?
+Driver,sa5,SA,belt,How acceptable is it for people in your city to allow a child in a car without protective equipment (child seat or seatbelt)?
+Driver,pa4,PA,belt,How acceptable is it for you personally if a driver does not wear a seatbelt?
+Driver,pa5,PA,belt,How acceptable is it for you personally if a driver allows a child in a car without protective equipment?
+Driver,sn3,SN,belt,Most of my friends do not use seatbelts while driving.
+Driver,att4,ATT,belt,Using a seatbelt is unnecessary for short trips.
+Driver,pbc7,PBC,belt,I can drive without issues even if I don’t use a seatbelt.
+Driver,hab7,HAB,belt,I usually do not wear a seatbelt while driving.
+Driver,int4,INT,belt,I intend to always wear a seatbelt while driving in the next month.
+Driver,nbv1,NBV,parking,"In the Past Month, while driving, how often did you double-park on streets?"
+Driver,nbv2,NBV,parking,"In the Past Month, while driving, how often did you park in “No Parking” zones or at intersections?"
+Driver,sa8,SA,parking,How acceptable is it for people in your city to park in “No Parking” zones?
+Driver,sa9,SA,parking,How acceptable is it for people in your city to double-park on streets?
+Driver,pa8,PA,parking,How acceptable is it for you personally if a driver parks in “No Parking” zones?
+Driver,pa9,PA,parking,How acceptable is it for you personally if a driver double-parks on streets?
+Motorcyclist,rbf9,RBF,alert,"In the past month, while riding, how often did you ride while sleepy or not fully alert?"
+Motorcyclist,sa3,SA,alert,How acceptable is it for people in your city to ride while sleepy or not fully alert?
+Motorcyclist,pa3,PA,alert,How acceptable is it for you personally if a person rides while sleepy or not fully alert?
+Motorcyclist,sn1,SN,alert,Most of my friends might ride when they are not fully alert.
+Motorcyclist,att1,ATT,alert,Riding without being fully alert isn’t very dangerous if the destination is close.
+Motorcyclist,pbc1,PBC,alert,I am a skilled motorcyclist and can ride safely even if I am not fully alert.
+Motorcyclist,hab1,HAB,alert,I often ride without full alertness.
+Motorcyclist,int1,INT,alert,I plan to ride only when I am fully alert in the next month.
+Motorcyclist,rbf3,RBF,speed,"In the past month, while riding, how often did you ride at speeds above the safe limit (over 50 km/h)?"
+Motorcyclist,sa4,SA,speed,How acceptable is it for people in your city to ride at speeds above the safe limit (over 50 km/h)?
+Motorcyclist,pa4,PA,speed,How acceptable is it for you personally if a person rides at speeds above the safe limit (over 50 km/h)?
+Motorcyclist,sn2,SN,speed,Most of my friends might ride unsafely in residential areas.
+Motorcyclist,att2,ATT,speed,Reducing my speed feels like a waste of time.
+Motorcyclist,att3,ATT,speed,Riding at the legal speed limit is boring.
+Motorcyclist,pbc2,PBC,speed,I am confident I can control my motorcycle at any speed.
+Motorcyclist,pbc3,PBC,speed,I can take sharp turns at high speeds.
+Motorcyclist,hab2,HAB,speed,I usually ride faster than the speed limit.
+Motorcyclist,hab3,HAB,speed,I often ride through curves like a rally driver.
+Motorcyclist,int2,INT,speed,I will make every effort to always ride at a safe speed in the next month.
+Motorcyclist,rbf5,RBF,phone,"In the past month, while riding, how often did you check mobile messages or browse social media?"
+Motorcyclist,rbf7,RBF,phone,"In the past month, while riding, how often did you talk on the phone or use headphones?"
+Motorcyclist,sa7,SA,phone,How acceptable is it for people in your city to talk on the phone while riding?
+Motorcyclist,sa8,SA,phone,How acceptable is it for people in your city to check mobile messages while riding?
+Motorcyclist,pa7,PA,phone,How acceptable is it for you personally if a person talks on the phone while riding?
+Motorcyclist,pa8,PA,phone,How acceptable is it for you personally if a person checks mobile messages while riding?
+Motorcyclist,sn5,SN,phone,Most of my friends use their phones while riding.
+Motorcyclist,att5,ATT,phone,"I always want to respond to mobile phone notifications immediately, even while riding."
+Motorcyclist,att6,ATT,phone,Sometimes I use my phone while riding to save time.
+Motorcyclist,pbc4,PBC,phone,I am confident that checking mobile messages while riding is safe.
+Motorcyclist,pbc5,PBC,phone,I can respond to messages while riding without any problems.
+Motorcyclist,pbc6,PBC,phone,I can ride properly while talking on the phone.
+Motorcyclist,hab4,HAB,phone,I often type messages on my phone while riding.
+Motorcyclist,hab5,HAB,phone,I often talk on the phone while riding.
+Motorcyclist,hab6,HAB,phone,I often check mobile messages while riding.
+Motorcyclist,int3,INT,phone,I intend to avoid using my phone while riding in the next month.
+Motorcyclist,rbf4,RBF,helmet,"In the past month, while riding, how often did you ride without wearing a helmet?"
+Motorcyclist,sa5,SA,helmet,How acceptable is it for people in your city to ride without wearing a helmet?
+Motorcyclist,pa5,PA,helmet,How acceptable is it for you personally if a person rides without wearing a helmet?
+Motorcyclist,sn3,SN,helmet,Most of my friends do not wear helmets while riding.
+Motorcyclist,att4,ATT,helmet,Wearing a helmet isn’t necessary if the destination is close.
+Motorcyclist,pbc7,PBC,helmet,I can reach my destination safely even without wearing a helmet.
+Motorcyclist,hab7,HAB,helmet,I often use helmet while riding.
+Motorcyclist,int4,INT,helmet,I plan to always wear a helmet while riding in the next month.
+Motorcyclist,rbf1,RBF,lane,"In the past month, while riding, how often did you ride in a bicycle lane?"
+Motorcyclist,rbf2,RBF,lane,"In the past month, while riding, how often did you ride on a sidewalk?"
+Motorcyclist,sa1,SA,lane,How acceptable is it for people in your city to ride in a bicycle lane?
+Motorcyclist,sa2,SA,lane,How acceptable is it for people in your city to ride on a sidewalk?
+Motorcyclist,pa1,PA,lane,How acceptable is it for you personally if a person rides in a bicycle lane?
+Motorcyclist,pa2,PA,lane,How acceptable is it for you personally if a person rides on a sidewalk?
+Motorcyclist,rbf6,RBF,passenger,"In the past month, while riding, how often did you carry more than one passenger?"
+Motorcyclist,sa6,SA,passenger,How acceptable is it for people in your city to carry more than one passenger?
+Motorcyclist,pa6,PA,passenger,How acceptable is it for you personally if a person carries more than one passenger?

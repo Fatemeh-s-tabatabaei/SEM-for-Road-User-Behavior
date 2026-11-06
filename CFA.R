@@ -1,77 +1,90 @@
 library(lavaan)
 
-# 1. Settings
-data_dir <- "ItemPrep"            # folder with the four ready files
-out_dir  <- "cfa_results"
-groups   <- c("Cyclist", "Pedestrian", "Driver", "Motorcyclist")
-# groups <- "Cyclist"             # <- one group while debugging
+# 1. Settings -----------------------------------------------------------
+data_dir <- "ItemPrep"            # *_items_ready.csv (merged categories)
+raw_dir  <- "CleaningResults"     # *_model_data.csv (original 1-5 codes, for rbf_mean)
+out_dir  <- "cfa_results_v2"
+groups   <- "Cyclist"             # respecification is set up for cyclists only
+id_col   <- "resp_id"             # respondent id, written next to rbf_mean
 
-sample_def     <- "no_dups"       # "all"     every row
-                                  # "no_dups" drop rows with dup_of set
-                                  # "adults"  no_dups and age >= 18
-missing_method <- "listwise"      # or "pairwise" (keeps more rows, but the
-                                  # correlation matrix can fail to be PD)
-min_items   <- 3                  # fewer items -> not a factor
-min_loading <- 0.50               # standardized loading flag
-min_omega   <- 0.70               # reliability flag
-mi_min      <- 10                 # smallest modification index reported
-run_all_factors <- FALSE          # also fit ALL factors in one model
-                                  # (large; N = 206 motorcyclists is risky)
+sample_def     <- "no_dups"       # "all" / "no_dups" / "adults"
+sl_max_blocks  <- NA              # e.g. 5: also drop sl_blocks >= 5 (sensitivity)
+include_reversed <- TRUE          # use *_r items (the old regex skipped them)
+drop_file      <- "drop_items.csv"  # approved item drops (group,item); optional
+missing_method <- "listwise"
+min_items   <- 3
+min_loading <- 0.50
+min_omega   <- 0.70
+min_ave     <- 0.50
+mi_min      <- 10
 
-# factor name -> column prefix
 factor_prefix <- c(ATT = "att", SN = "sn", PBC = "pbc", HAB = "hab",
                    INT = "int", SA = "sa", PA = "pa", RBF = "rbf",
                    NBV = "nbv", INFRA = "infra", MR = "mr",
                    CAUSE = "cause", PENF = "penf")
 
-# A block is fitted only if >= 2 of its factors exist.
 blocks <- list(
   tpb        = c("ATT", "SN", "PBC", "HAB", "INT"),
   acceptance = c("SA", "PA"),
   context    = c("MR", "PENF", "CAUSE", "INFRA")
 )
-# Tier 1 structural model (H1-H7): everything that predicts INT and RBF.
-# NBV (parking violations) exists for drivers only.
 tier1 <- c("ATT", "SN", "PBC", "HAB", "INT", "SA", "PA", "RBF", "NBV")
+
+# 2. Respecification (numbers refer to the CFA notes) -------------------
+# Reversed items made in item prep (named *_r) that join a factor
+add_items <- list(
+  Cyclist = list(SN = "sn4_r")      # #8 "My family complies with traffic laws", reversed
+)
+# Items removed from the factors
+drop_items <- list(
+  Cyclist = c("sn5",                # #7 placed among habit items, cross-loads on HAB
+              "pbc7", "hab7",       # #3 helmet items with the largest cross-construct MIs
+              "att3",               # #4 near-duplicate of att2 ("lower speeds wasting time")
+              "rbf1",               # #5 helmet non-use, loading ~ .10 (still in rbf_mean)
+              "penf1")              # #9 weakest PENF item
+)
+# Residual covariances (used only if both items are in the model)
+res_cov <- list(
+  Cyclist = c("hab5 ~~ hab6",                     # #4 talk on phone / check messages
+              "pbc2 ~~ pbc3",                     # #4 control at any speed / sharp turns at speed
+              "att4 ~~ int4",                     # #3 helmet unnecessary / intend to wear helmet
+              paste0("sa", 1:6, " ~~ pa", 1:6))   # #3 SA and PA items are parallel by design
+)
+# If PENF still has AVE below min_ave without penf1, PENF is dropped (#9)
+
+# M0 = previous run, M1 = item changes, M2 = item changes + residual covariances
+steps <- list(M0 = c(items = FALSE, cov = FALSE),
+              M1 = c(items = TRUE,  cov = FALSE),
+              M2 = c(items = TRUE,  cov = TRUE))
 
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
-# 2. Helpers
-read_group <- function(g) { # read the ready file for one group, filter by sample_def
-  f <- list.files(data_dir, pattern = paste0("^", g, "_items_ready.*\\.csv$"), full.names = TRUE)
-  d <- read.csv(f[1], na.strings = c("", "NA"), fileEncoding = "UTF-8-BOM")
-  n0 <- nrow(d)
-  if (sample_def %in% c("no_dups", "adults")) d <- d[is.na(d$dup_of), ]
+# 3. Helpers -------------------------------------------------------------
+apply_sample <- function(d) {
+  if (sample_def %in% c("no_dups", "adults") && "dup_of" %in% names(d)) d <- d[is.na(d$dup_of), ]
   if (sample_def == "adults")                 d <- d[!is.na(d$age) & d$age >= 18, ]
   d
 }
 
-# list of factors -> list(NAME = c(items)), items sorted by their number
-find_factors <- function(dat) {
-  fs <- list()
-  for (nm in names(factor_prefix)) {
-    p   <- factor_prefix[[nm]]
-    its <- grep(paste0("^", p, "[0-9]+$"), names(dat), value = TRUE) # items with that prefix
-    if (length(its) >= min_items) {
-      its <- its[order(as.numeric(sub(p, "", its)))]
-      fs[[nm]] <- its
-    }
-  }
-  fs
+source("Model Test/Common.R")                # read_group(), find_factors(), sample_tag()
+out_dir <- file.path("cfa_results", sample_tag())   # one folder per sample setting
+dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+
+make_syntax <- function(fs, cov_lines = NULL) {
+  items <- unlist(fs)
+  lines <- sapply(names(fs), function(f)
+    paste0(f, " =~ ", paste(fs[[f]], collapse = " + ")))
+  for (cl in cov_lines)
+    if (all(strsplit(cl, " ~~ ")[[1]] %in% items)) lines <- c(lines, cl)
+  paste(lines, collapse = "\n")
 }
 
-make_syntax <- function(fs) {
-  paste(sapply(names(fs), function(f)
-    paste0(f, " =~ ", paste(fs[[f]], collapse = " + "))), collapse = "\n")
-}
-
-# fit one model; never stops the whole run
-fit_cfa <- function(fs, dat) {
+fit_cfa <- function(fs, dat, cov_lines = NULL) {
   items <- unlist(fs, use.names = FALSE)
   warns <- character(0)
   fit <- tryCatch(
     withCallingHandlers(
-      cfa(make_syntax(fs), data = dat[, items, drop = FALSE], ordered = items,
+      cfa(make_syntax(fs, cov_lines), data = dat[, items, drop = FALSE], ordered = items,
           estimator = "WLSMV", std.lv = TRUE, missing = missing_method),
       warning = function(w) { warns <<- c(warns, conditionMessage(w))
                               invokeRestart("muffleWarning") }),
@@ -97,7 +110,6 @@ fit_row <- function(res, g, label, fs) {
                                 "cfi.scaled", "tli.scaled", "rmsea.scaled",
                                 "rmsea.ci.lower.scaled", "rmsea.ci.upper.scaled",
                                 "srmr")), rep(NA_real_, 9))
-  # admissible = converged, no negative variances, no |std loading| > 1
   post <- safe(suppressWarnings(lavInspect(fit, "post.check")), FALSE)
   ss   <- safe(standardizedSolution(fit), NULL)
   over <- !is.null(ss) && any(abs(ss$est.std[ss$op == "=~"]) > 1, na.rm = TRUE)
@@ -116,7 +128,6 @@ loading_rows <- function(fit, g, label) {
   cbind(group = g, model = label, ss, row.names = NULL)
 }
 
-# composite reliability (omega from standardized loadings) and AVE
 reliab_rows <- function(fit, g, label) {
   ss <- standardizedSolution(fit)
   ss <- ss[ss$op == "=~", ]
@@ -129,17 +140,14 @@ reliab_rows <- function(fit, g, label) {
   })
   out <- do.call(rbind, out)
   out$flag <- paste0(ifelse(out$omega < min_omega, paste("omega <", min_omega, ";"), ""),
-                     ifelse(out$ave < 0.5, " AVE < .50", ""))
+                     ifelse(out$ave < min_ave, " AVE < .50", ""))
   cbind(group = g, model = label, out, row.names = NULL)
 }
 
-# HTMT from the sample (polychoric) item correlations
 htmt_rows <- function(fit, fs, g, label) {
-  R <- as.matrix(lavInspect(fit, "sampstat")$cov)   # polychoric correlations
+  R <- as.matrix(lavInspect(fit, "sampstat")$cov)
   nm <- names(fs)
-  within <- sapply(fs, function(it) {
-    m <- abs(R[it, it]); mean(m[lower.tri(m)])
-  })
+  within <- sapply(fs, function(it) { m <- abs(R[it, it]); mean(m[lower.tri(m)]) })
   rows <- list()
   for (i in seq_along(nm)) for (j in seq_along(nm)) if (i < j) {
     between <- mean(abs(R[fs[[i]], fs[[j]]]))
@@ -178,21 +186,36 @@ mi_rows <- function(fit, g, label, top = 20) {
   cbind(group = g, model = label, mi, row.names = NULL)
 }
 
-# ---- 3. Run -----------------------------------------------------------
+# rbf_mean from the ORIGINAL 1-5 codes, all RBF items including rbf1 (#5)
+write_rbf_mean <- function(g, g_dir) {
+  f <- file.path(raw_dir, paste0(g, "_model_data.csv"))
+  if (!file.exists(f)) { cat("  rbf_mean skipped, file not found:", f, "\n"); return(invisible()) }
+  d <- apply_sample(read.csv(f, na.strings = c("", "NA"), fileEncoding = "UTF-8-BOM"))
+  its <- grep("^rbf[0-9]+$", names(d), value = TRUE)
+  x <- d[, its]
+  ok <- rowSums(!is.na(x)) >= length(its) / 2          # at least half answered
+  id <- if (id_col %in% names(d)) d[[id_col]] else seq_len(nrow(d))
+  out <- data.frame(id = id, rbf_mean = ifelse(ok, rowMeans(x, na.rm = TRUE), NA))
+  names(out)[1] <- id_col
+  write.csv(out, file.path(g_dir, "rbf_mean.csv"), row.names = FALSE)
+  cat(sprintf("  rbf_mean: items %s, n = %d, mean = %.2f, sd = %.2f\n",
+              paste(its, collapse = " "), sum(ok), mean(out$rbf_mean, na.rm = TRUE),
+              sd(out$rbf_mean, na.rm = TRUE)))
+}
 
+# 4. Run -----------------------------------------------------------------
 for (g in groups) {
-  dat <- read_group(g)
-  fs  <- find_factors(dat)
+  cat("\n=====", g, "=====\n")
+  dat   <- read_group(g)
   g_dir <- file.path(out_dir, g)
   dir.create(g_dir, showWarnings = FALSE, recursive = TRUE)
-  cat("Factors:", paste(sprintf("%s(%d)", names(fs), lengths(fs)), collapse = "  "), "\n")
 
   res <- list(fit = list(), load = list(), rel = list(), fcor = list(),
               htmt = list(), mi = list())
-  record <- function(label, fsub) {
-    r <- fit_cfa(fsub, dat)
+  record <- function(label, fsub, cov_lines) {
+    r <- fit_cfa(fsub, dat, cov_lines)
     res$fit[[label]] <<- fit_row(r, g, label, fsub)
-    cat(sprintf("  %-14s items=%2d  %s\n", label, length(unlist(fsub)),
+    cat(sprintf("  %-18s items=%2d  %s\n", label, length(unlist(fsub)),
                 if (is.null(r$fit)) "FAILED"
                 else if (!isTRUE(res$fit[[label]]$admissible)) "fitted, NOT admissible"
                 else "ok"))
@@ -203,32 +226,52 @@ for (g in groups) {
     if (length(fsub) >= 2) {
       res$fcor[[label]] <<- factor_cor_rows(r$fit, rel, g, label)
       res$htmt[[label]] <<- htmt_rows(r$fit, fsub, g, label)
-      res$mi[[label]]   <<- mi_rows(r$fit, g, label)
     }
+    res$mi[[label]] <<- mi_rows(r$fit, g, label)
   }
 
-  # Stage 1: one factor at a time
-  for (f in names(fs)) record(paste0("one_", f), fs[f])
+  for (s in names(steps)) {
+    sp <- steps[[s]]
+    fs <- find_factors(dat, g, sp[["items"]])
+    cl <- if (sp[["cov"]]) res_cov[[g]] else NULL
+    cat("\n", s, " factors: ", paste(sprintf("%s(%d)", names(fs), lengths(fs)), collapse = "  "),
+        "\n", sep = "")
 
-  # Stage 2a: blocks
-  for (b in names(blocks)) {
-    fb <- fs[names(fs) %in% blocks[[b]]]
-    if (length(fb) >= 2) record(paste0("block_", b), fb)
+    # direction check of added reversed items: should correlate positively
+    if (s == "M1") for (nm in names(add_items[[g]])) for (it in intersect(add_items[[g]][[nm]], fs[[nm]])) {
+      rho <- cor(dat[[it]], rowMeans(dat[setdiff(fs[[nm]], it)], na.rm = TRUE),
+                 use = "complete.obs", method = "spearman")
+      cat(sprintf("  direction check: %s vs other %s items: rho = %.2f%s\n", it, nm, rho,
+                  if (rho < 0) "  <- NEGATIVE, check the reversal" else ""))
+    }
+
+    # Stage 1: one factor at a time
+    for (f in names(fs)) record(paste0(s, "_one_", f), fs[f], cl)
+
+    # #9: PENF still weak without penf1 -> drop the whole scale
+    if (sp[["items"]] && "PENF" %in% names(fs)) {
+      ave <- res$rel[[paste0(s, "_one_PENF")]]$ave
+      if (!is.null(ave) && ave < min_ave) {
+        cat(sprintf("  PENF AVE = %.2f < %.2f without penf1 -> PENF dropped\n", ave, min_ave))
+        fs$PENF <- NULL
+      }
+    }
+
+    # Stage 2: blocks, Tier 1, Tier 1 without the RBF factor
+    for (b in names(blocks)) {
+      fb <- fs[names(fs) %in% blocks[[b]]]
+      if (length(fb) >= 2) record(paste0(s, "_block_", b), fb, cl)
+    }
+    ft <- fs[names(fs) %in% tier1]
+    if (length(ft) >= 2) record(paste0(s, "_tier1"), ft, cl)
+    ft <- ft[names(ft) != "RBF"]
+    if (length(ft) >= 2) record(paste0(s, "_tier1_noRBF"), ft, cl)
   }
 
-  # Stage 2b: Tier 1 model
-  ft <- fs[names(fs) %in% tier1]
-  if (length(ft) >= 2) record("tier1", ft)
-
-  # optional: everything at once
-  if (run_all_factors) record("all_factors", fs)
-
+  # 5. Output ------------------------------------------------------------
   bind <- function(x) if (length(x)) do.call(rbind, x) else NULL
-  write_out <- function(x, name) {
-    if (!is.null(x)) {
-      write.csv(x, file.path(g_dir, paste0(name, ".csv")), row.names = FALSE)
-    }
-  }
+  write_out <- function(x, name)
+    if (!is.null(x)) write.csv(x, file.path(g_dir, paste0(name, ".csv")), row.names = FALSE)
   fit_tab <- bind(res$fit)
   write_out(fit_tab,         "fit")
   write_out(bind(res$load),  "loadings")
@@ -236,27 +279,35 @@ for (g in groups) {
   write_out(bind(res$fcor),  "factor_cor")
   write_out(bind(res$htmt),  "htmt")
   write_out(bind(res$mi),    "modindices")
+  write_rbf_mean(g, g_dir)
 
-  # console summary
+  # step comparison for the multi-factor models
+  tpb <- c("ATT", "SN", "PBC", "HAB")
+  cmp <- list()
+  for (lab in names(res$fit)) {
+    if (!grepl("_(block_tpb|tier1|tier1_noRBF)$", lab)) next
+    f  <- res$fit[[lab]]; fc <- res$fcor[[lab]]; ht <- res$htmt[[lab]]
+    sel <- if (is.null(fc)) FALSE else fc$factor1 %in% tpb & fc$factor2 %in% tpb
+    cmp[[lab]] <- data.frame(
+      model = lab, n_items = f$n_items, n_used = f$n_used, admissible = f$admissible,
+      cfi = f$cfi, tli = f$tli, rmsea = f$rmsea, srmr = f$srmr,
+      max_r_tpb      = if (any(sel)) max(abs(fc$r[sel])) else NA,
+      n_r_gt_sqrtave = if (is.null(fc)) NA else sum(fc$flag != ""),
+      n_htmt_gt_85   = if (is.null(ht)) NA else sum(ht$flag != ""))
+  }
+  cmp <- bind(cmp)
+  write_out(cmp, "step_comparison")
+  cat("\n  Step comparison:\n")
+  print(format(cmp, digits = 3), row.names = FALSE)
+
+  # weak items and scales in the final step (int1 check, #6)
   s <- bind(res$load)
-  if (!is.null(s)) {
-    weak <- s[s$model %in% paste0("one_", names(fs)) & s$flag != "", ]
-    cat(sprintf("\n  Items with std loading < %.2f in their one-factor model: %d\n",
-                min_loading, nrow(weak)))
-    if (nrow(weak)) print(weak[, c("factor", "item", "std_loading")], row.names = FALSE)
-  }
+  weak <- s[s$model == "M2_tier1" & s$flag != "", c("factor", "item", "std_loading")]
+  cat(sprintf("\n  M2 tier1, items with std loading < %.2f: %d\n", min_loading, nrow(weak)))
+  if (nrow(weak)) print(weak, row.names = FALSE)
   r <- bind(res$rel)
-  if (!is.null(r)) {
-    lowr <- r[r$model %in% paste0("one_", names(fs)) & r$omega < min_omega,
-              c("factor", "omega", "ave")]
-    if (nrow(lowr)) { cat("\n  Scales with omega <", min_omega, ":\n")
-                      print(lowr, row.names = FALSE) }
-  }
-  cat("\n  Fit of multi-factor models:\n")
-  mf <- fit_tab[fit_tab$n_factors >= 2,
-                c("model", "n_items", "n_used", "converged", "admissible",
-                  "cfi", "tli", "rmsea", "srmr")]
-  if (nrow(mf)) print(format(mf, digits = 3), row.names = FALSE)
+  lowr <- r[grepl("^M2_one_", r$model) & r$flag != "", c("factor", "omega", "ave", "flag")]
+  if (nrow(lowr)) { cat("\n  M2 one-factor models with flags:\n"); print(lowr, row.names = FALSE) }
 }
 
 cat("\nResults written to", normalizePath(out_dir), "\n")

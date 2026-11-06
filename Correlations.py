@@ -11,7 +11,7 @@ OUT_FILE = Path("Screening") / "item_rest.csv"
 OUT_REVIEW = Path("Screening") / "item_rest_review.csv"
 FILES = {g: f"{g.capitalize()}_items_ready.csv"
          for g in ("cyclist", "pedestrian", "driver", "motorcyclist")}
-STEMS = {"rbf": "RBF", "nbv": "NVF", "sa": "SA", "pa": "PA", "sn": "SN",
+STEMS = {"rbf": "RBF", "nbv": "NBV", "sa": "SA", "pa": "PA", "sn": "SN",
          "att": "ATT", "pbc": "PBC", "hab": "HAB", "int": "INT", "mr": "MR",
          "infra": "ENV", "aenf": "AE", "cause": "PC", "penf": "PE"}
 WEAK, BORDER, MIN_ITEMS = 0.25, 0.30, 3

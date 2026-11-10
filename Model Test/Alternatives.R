@@ -19,17 +19,18 @@
 # Output: alternatives_results/<sample>/{fit,lrt,factor_cor,esem_loadings}.csv
 # If behaviour_map.csv is missing, a template is written for you to fill in.
 
-source("Model Test/common.R")
+source("Model Test/Common.R")
 
 alt_scope <- tpb            # factors in the block
 run_esem  <- FALSE
-behaviour_file <- file.path("Model Test", "behaviour_map.csv")   # columns: group,item,behaviour
+behaviour_file <- "behaviour_map.csv"   # same map as Behavior_Factor_CFA.R (mode or group, item, behaviour)
 out_dir   <- file.path("alternatives_results", sample_tag())
 
 # ---- behaviour map -----------------------------------------------------------
 read_behaviours <- function() {
   if (!file.exists(behaviour_file)) return(NULL)
   b <- read.csv(behaviour_file, stringsAsFactors = FALSE, strip.white = TRUE)
+  if (!"group" %in% names(b) && "mode" %in% names(b)) names(b)[names(b) == "mode"] <- "group"
   b$group <- tolower(b$group)
   b[!is.na(b$behaviour) & nzchar(b$behaviour), ]
 }

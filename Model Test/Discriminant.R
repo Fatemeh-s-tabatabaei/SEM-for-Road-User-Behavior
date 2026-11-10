@@ -15,7 +15,7 @@
 #
 # Output: discriminant_results/<sample>/{fit,factor_cor_ci,chisq_cut_tests}.csv
 
-source("Model Test/common.R")
+source("Model Test/Common.R")
 
 scope     <- tier1          # factors in the tested model; set to tpb for a faster run
 cuts      <- c(0.90, 1.00)  # correlation values to test against

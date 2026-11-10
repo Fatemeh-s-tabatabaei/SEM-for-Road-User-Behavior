@@ -67,7 +67,7 @@ apply_sample <- function(d) {
 }
 
 source("Model Test/Common.R")                # read_group(), find_factors(), sample_tag()
-out_dir <- file.path("cfa_results", sample_tag())   # one folder per sample setting
+out_dir <- file.path(out_dir, sample_tag())   # one folder per sample setting
 dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 
 make_syntax <- function(fs, cov_lines = NULL) {

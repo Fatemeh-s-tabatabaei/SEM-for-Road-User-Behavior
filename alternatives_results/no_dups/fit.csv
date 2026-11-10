@@ -1,0 +1,6 @@
+"group","model","converged","admissible","n_used","chisq.scaled","df.scaled","pvalue.scaled","cfi.scaled","tli.scaled","rmsea.scaled","srmr","warnings"
+"Cyclist","five_factor",TRUE,TRUE,249,1050.0263,269,0,0.878,0.8639,0.1082,0.0898,""
+"Cyclist","merge_PBC_HAB",TRUE,TRUE,249,1072.3814,272,0,0.8749,0.8621,0.1089,0.091,""
+"Cyclist","merge_core",TRUE,TRUE,249,1093.9811,274,0,0.8719,0.8597,0.1099,0.092,""
+"Cyclist","second_order",TRUE,TRUE,249,1042.8837,271,0,0.8794,0.8665,0.1072,0.0899,""
+"Cyclist","behaviour_res",TRUE,TRUE,249,577.0178,210,0,0.9427,0.9181,0.0839,0.0636,""

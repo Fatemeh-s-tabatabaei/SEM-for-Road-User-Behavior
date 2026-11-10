@@ -1,0 +1,13 @@
+"group","model","converged","admissible","n_used","chisq.scaled","df.scaled","pvalue.scaled","cfi.scaled","tli.scaled","rmsea.scaled","srmr","warnings"
+"Cyclist","free",TRUE,TRUE,249,2139.3658,1099,0,0.8976,0.8904,0.0618,0.089,"lavaan->lav_model_vcov():  
+   The variance-covariance matrix of the estimated parameters (vcov) does not 
+   appear to be positive definite! The smallest eigenvalue (= -1.934027e-17) 
+   is smaller than zero. This may be a symptom that the model is not 
+   identified."
+"Pedestrian","free",TRUE,TRUE,378,1998.7664,1006,0,0.9184,0.9123,0.0512,0.0698,""
+"Driver","free",TRUE,TRUE,393,2837.8967,1503,0,0.9296,0.9253,0.0476,0.0802,""
+"Motorcyclist","free",TRUE,TRUE,204,1944.5079,1349,0,0.9529,0.9501,0.0466,0.0906,"lavaan->lav_model_vcov():  
+   The variance-covariance matrix of the estimated parameters (vcov) does not 
+   appear to be positive definite! The smallest eigenvalue (= -1.323610e-16) 
+   is smaller than zero. This may be a symptom that the model is not 
+   identified."

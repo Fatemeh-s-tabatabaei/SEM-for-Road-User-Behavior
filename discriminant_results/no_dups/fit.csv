@@ -1,0 +1,6 @@
+"group","model","converged","admissible","n_used","chisq.scaled","df.scaled","pvalue.scaled","cfi.scaled","tli.scaled","rmsea.scaled","srmr","warnings"
+"Cyclist","free",TRUE,TRUE,249,2104.776,1052,0,0.8959,0.8884,0.0635,0.0893,"lavaan->lav_model_vcov():  
+   The variance-covariance matrix of the estimated parameters (vcov) does not 
+   appear to be positive definite! The smallest eigenvalue (= -8.926369e-18) 
+   is smaller than zero. This may be a symptom that the model is not 
+   identified."

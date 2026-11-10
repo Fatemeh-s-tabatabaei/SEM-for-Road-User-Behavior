@@ -45,26 +45,10 @@ drop_items <- list(Cyclist = "rbf1", Pedestrian = "hab5",
 bmap <- read.csv(map_file, stringsAsFactors = FALSE)
  
 # ---- helpers ----------------------------------------------------------
-read_mode <- function(m) {
-  f <- list.files(data_dir, pattern = paste0("^", m, "_items_ready.*\\.csv$"),
-                  full.names = TRUE)
-  if (length(f) != 1) stop(m, ": expected one ready file, found ", length(f))
-  d <- read.csv(f, stringsAsFactors = FALSE)
-  if ("dup_of" %in% names(d)) d <- d[is.na(d$dup_of) | d$dup_of == "", ]
-  d
-}
- 
-construct_items <- function(d, m) {
-  sp <- list()
-  for (p in names(prefixes)) {
-    its <- grep(paste0("^", p, "[0-9]+$"), names(d), value = TRUE)
-    its <- setdiff(its, drop_items[[m]])
-    its <- its[order(as.integer(sub("^[a-z]+", "", its)))]
-    if (length(its) >= 3) sp[[prefixes[[p]]]] <- its
-  }
-  sp
-}
- 
+source("Model Test/Common.R")
+read_mode <- function(m) read_group(m)
+construct_items <- function(d, m) { fs <- find_factors(d, m); fs[names(fs) %in% prefixes] }
+
 behaviour_terms <- function(sp, m, scope) {
   item_con <- setNames(rep(names(sp), lengths(sp)), unlist(sp))
   mm <- bmap[bmap$mode == m & bmap$item %in% names(item_con), ]
@@ -98,7 +82,7 @@ build_model <- function(sp, bt) {
 fit_one <- function(model, d, items) {
   tryCatch(
     cfa(paste(model, collapse = "\n"), data = d, ordered = items,
-        estimator = "WLSMV", std.lv = TRUE, missing = "pairwise"),
+        estimator = "WLSMV", std.lv = TRUE, missing = "listwise"),
     error = function(e) { message("  fit error: ", conditionMessage(e)); NULL })
 }
  

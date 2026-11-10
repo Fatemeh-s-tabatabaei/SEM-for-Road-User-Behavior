@@ -1,0 +1,5 @@
+"group","restricted","general","chisq_diff","df_diff","p"
+"Cyclist","merge_PBC_HAB","five_factor",30.5,3,1.08e-06
+"Cyclist","merge_core","five_factor",51.515,5,6.78e-10
+"Cyclist","second_order","five_factor",1.551,2,0.461
+"Cyclist","five_factor","behaviour_res",608.572,59,2.84e-92

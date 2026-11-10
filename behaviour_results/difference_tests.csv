@@ -1,7 +1,7 @@
 "mode","comparison","chisq_diff","df_diff","p"
-"Cyclist","base vs A",392.54,24,2.55e-68
-"Cyclist","A vs B",375.62,20,2.29e-67
-"Driver","base vs A",410.77,23,1.07e-72
-"Driver","A vs B",640.56,29,2.42e-116
-"Motorcyclist","base vs A",174.69,24,7.53e-25
-"Motorcyclist","A vs B",130.13,27,1.85e-15
+"Cyclist","base vs A",393.3,24,1.78e-68
+"Cyclist","A vs B",375.21,20,2.79e-67
+"Driver","base vs A",409.75,23,1.75e-72
+"Driver","A vs B",640.49,29,2.51e-116
+"Motorcyclist","base vs A",177.2,24,2.51e-25
+"Motorcyclist","A vs B",129.96,27,1.98e-15

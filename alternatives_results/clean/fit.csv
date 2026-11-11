@@ -3,23 +3,31 @@
 "Cyclist","merge_PBC_HAB",TRUE,TRUE,249,1327.3626,371,0,0.8708,0.8586,0.102,0.0957,""
 "Cyclist","merge_core",TRUE,TRUE,249,1345.2794,374,0,0.8688,0.8576,0.1023,0.0966,""
 "Cyclist","second_order",TRUE,TRUE,249,1301.7891,371,0,0.8743,0.8624,0.1006,0.0951,""
-"Cyclist","behaviour_res",TRUE,TRUE,249,699.3036,284,0,0.9439,0.9198,0.0768,0.0663,""
+"Cyclist","behaviour_res",TRUE,TRUE,249,904.9178,308,0,0.9194,0.8937,0.0884,0.076,""
+"Cyclist","second_order_res",TRUE,TRUE,249,898.61,312,0,0.9208,0.8969,0.0871,0.0762,""
 "Pedestrian","five_factor",TRUE,TRUE,378,922.4895,265,0,0.9275,0.9179,0.0811,0.0674,""
 "Pedestrian","merge_PBC_HAB",TRUE,TRUE,378,966.7615,269,0,0.9231,0.9142,0.0829,0.0692,""
 "Pedestrian","merge_core",TRUE,TRUE,378,1040.1418,272,0,0.9153,0.9066,0.0865,0.0727,""
 "Pedestrian","second_order",TRUE,TRUE,378,907.8307,269,0,0.9296,0.9215,0.0794,0.0681,""
-"Pedestrian","behaviour_res",TRUE,TRUE,378,676.7901,218,0,0.9494,0.9304,0.0747,0.0586,""
+"Pedestrian","behaviour_res",TRUE,TRUE,378,780.1565,235,0,0.9399,0.9233,0.0784,0.0633,""
+"Pedestrian","second_order_res",TRUE,TRUE,378,770.1336,239,0,0.9414,0.9265,0.0768,0.0638,""
 "Driver","five_factor",TRUE,TRUE,393,1300.3161,340,0,0.9064,0.8959,0.0849,0.0868,""
 "Driver","merge_PBC_HAB",TRUE,TRUE,393,1430.2242,344,0,0.8941,0.8836,0.0898,0.0906,""
 "Driver","merge_core",TRUE,TRUE,393,1500.7076,347,0,0.8875,0.8774,0.0921,0.0924,""
 "Driver","second_order",TRUE,TRUE,393,1265.2455,344,0,0.9102,0.9013,0.0827,0.0871,""
-"Driver","behaviour_res",TRUE,TRUE,393,977.8491,266,0,0.9306,0.9014,0.0826,0.0751,""
+"Driver","behaviour_res",TRUE,TRUE,393,1017.1173,289,0,0.929,0.9071,0.0802,0.0778,""
+"Driver","second_order_res",TRUE,TRUE,393,999.4076,293,0,0.9311,0.9111,0.0784,0.0783,""
 "Motorcyclist","five_factor",TRUE,TRUE,204,816.5611,367,0,0.9543,0.9494,0.0777,0.0848,""
 "Motorcyclist","merge_PBC_HAB",TRUE,TRUE,204,844.2718,371,0,0.9519,0.9473,0.0793,0.0872,""
 "Motorcyclist","merge_core",TRUE,TRUE,204,905.0967,374,0,0.946,0.9414,0.0836,0.092,""
 "Motorcyclist","second_order",TRUE,TRUE,204,810.2048,371,0,0.9553,0.9511,0.0764,0.0867,""
-"Motorcyclist","behaviour_res",TRUE,TRUE,204,639.0251,284,0,0.9639,0.9484,0.0785,0.0731,"lavaan->lav_model_vcov():  
+"Motorcyclist","behaviour_res",TRUE,TRUE,204,661.9623,308,0,0.964,0.9525,0.0752,0.0753,"lavaan->lav_model_vcov():  
    The variance-covariance matrix of the estimated parameters (vcov) does not 
-   appear to be positive definite! The smallest eigenvalue (= -4.353463e-17) 
+   appear to be positive definite! The smallest eigenvalue (= -3.001212e-17) 
+   is smaller than zero. This may be a symptom that the model is not 
+   identified."
+"Motorcyclist","second_order_res",TRUE,TRUE,204,654.6537,312,0,0.9651,0.9546,0.0736,0.077,"lavaan->lav_model_vcov():  
+   The variance-covariance matrix of the estimated parameters (vcov) does not 
+   appear to be positive definite! The smallest eigenvalue (= -1.052964e-13) 
    is smaller than zero. This may be a symptom that the model is not 
    identified."

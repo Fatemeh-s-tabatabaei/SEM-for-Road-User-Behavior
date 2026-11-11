@@ -1,0 +1,14 @@
+"group","outcome","r2"
+"Cyclist","INT",0.654
+"Cyclist","PA",0.651
+"Cyclist","RBF",0.372
+"Pedestrian","INT",0.584
+"Pedestrian","PA",0.361
+"Pedestrian","RBF",0.201
+"Driver","INT",0.332
+"Driver","PA",0.481
+"Driver","RBF",0.461
+"Driver","NBV",0.187
+"Motorcyclist","INT",0.544
+"Motorcyclist","PA",0.532
+"Motorcyclist","RBF",0.47

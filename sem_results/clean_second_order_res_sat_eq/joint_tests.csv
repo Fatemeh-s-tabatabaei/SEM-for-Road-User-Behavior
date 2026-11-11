@@ -1,0 +1,9 @@
+"group","test","paths","wald","df","p"
+"Cyclist","H8_H9","H8+H9",11.197,2,0.0037
+"Cyclist","H8_H9_H10","H8+H9+H10",17.916,3,0.000458
+"Pedestrian","H8_H9","H8+H9",18.056,2,0.00012
+"Pedestrian","H8_H9_H10","H8+H9+H10",20.236,3,0.000152
+"Driver","H8_H9","H8+H9",43.878,2,2.97e-10
+"Driver","H8_H9_H10","H8+H9+H10",45.224,3,8.29e-10
+"Motorcyclist","H8_H9","H8+H9",5.854,2,0.0535
+"Motorcyclist","H8_H9_H10","H8+H9+H10",10.78,3,0.013

@@ -1,0 +1,13 @@
+"group","facet","loading"
+"Cyclist","ATT",0.901
+"Cyclist","PBC",0.867
+"Cyclist","HAB",0.882
+"Pedestrian","ATT",0.924
+"Pedestrian","PBC",0.878
+"Pedestrian","HAB",0.908
+"Driver","ATT",0.876
+"Driver","PBC",0.852
+"Driver","HAB",0.867
+"Motorcyclist","ATT",0.876
+"Motorcyclist","PBC",0.947
+"Motorcyclist","HAB",0.907

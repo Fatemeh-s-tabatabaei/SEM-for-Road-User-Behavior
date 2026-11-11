@@ -1,0 +1,17 @@
+"group","model","converged","admissible","n_used","chisq.scaled","df.scaled","pvalue.scaled","cfi.scaled","tli.scaled","rmsea.scaled","srmr","warnings"
+"Cyclist","clean_second_order_res_sat_eq",TRUE,TRUE,248,2487.0692,1722,0,0.927,0.9199,0.0424,0.081,"lavaan->lav_model_vcov():  
+   The variance-covariance matrix of the estimated parameters (vcov) does not 
+   appear to be positive definite! The smallest eigenvalue (= -2.437977e-14) 
+   is smaller than zero. This may be a symptom that the model is not 
+   identified."
+"Pedestrian","clean_second_order_res_sat_eq",TRUE,TRUE,378,2025.2186,1113,0,0.9277,0.9204,0.0466,0.0674,""
+"Driver","clean_second_order_res_sat_eq",TRUE,TRUE,370,3209.0924,2234,0,0.9464,0.942,0.0344,0.0731,"lavaan->lav_model_vcov():  
+   The variance-covariance matrix of the estimated parameters (vcov) does not 
+   appear to be positive definite! The smallest eigenvalue (= -1.042256e-14) 
+   is smaller than zero. This may be a symptom that the model is not 
+   identified."
+"Motorcyclist","clean_second_order_res_sat_eq",TRUE,TRUE,200,2594.1019,2040,0,0.9593,0.9559,0.0369,0.0924,"lavaan->lav_model_vcov():  
+   The variance-covariance matrix of the estimated parameters (vcov) does not 
+   appear to be positive definite! The smallest eigenvalue (= -1.241638e-14) 
+   is smaller than zero. This may be a symptom that the model is not 
+   identified."

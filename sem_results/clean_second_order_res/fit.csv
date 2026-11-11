@@ -1,0 +1,17 @@
+"group","model","converged","admissible","n_used","chisq.scaled","df.scaled","pvalue.scaled","cfi.scaled","tli.scaled","rmsea.scaled","srmr","warnings"
+"Cyclist","clean_second_order_res",FALSE,TRUE,249,NA,NA,NA,NA,NA,NA,NA,"lavaan->lav_step11_estoptim():  
+   the optimizer (NLMINB) claimed the model converged, but not all elements 
+   of the gradient are (near) zero; the optimizer may not have found a local 
+   solution use check.gradient = FALSE to skip this check."
+"Pedestrian","clean_second_order_res",TRUE,TRUE,378,2665.1344,1119,0,0.8775,0.8659,0.0605,0.0884,""
+"Driver","clean_second_order_res",FALSE,FALSE,374,NA,NA,NA,NA,NA,NA,NA,"lavaan->lav_step11_estoptim():  
+   the optimizer (NLMINB) claimed the model converged, but not all elements 
+   of the gradient are (near) zero; the optimizer may not have found a local 
+   solution use check.gradient = FALSE to skip this check."
+"Motorcyclist","clean_second_order_res",TRUE,FALSE,201,NA,1677,NA,NA,NA,NA,0.1101,"lavaan->lav_model_vcov():  
+   Could not compute standard errors! The information matrix could not be 
+   inverted. This may be a symptom that the model is not identified. | lavaan->lav_test_sb():  
+   could not invert information matrix needed for robust test statistic | lavaan->lav_object_post_check():  
+   some estimated ov variances are negative | lavaan->lav_object_post_check():  
+   covariance matrix of latent variables is not positive definite ; use 
+   lavInspect(fit, ""cov.lv"") to investigate."

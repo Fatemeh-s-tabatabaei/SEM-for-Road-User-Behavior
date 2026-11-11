@@ -10,9 +10,15 @@
 #                      behaviour_map.csv; this is the README's design explanation)
 #   M5 esem            exploratory SEM over the same items (geomin rotation);
 #                      off by default, needs lavaan >= 0.6-13
+#   M6 second_order_res M3 + the M4 residual correlations: the candidate
+#                      measurement model for SEM.R
 #
-# M1, M2, M3 are nested in M0, and M0 is nested in M4, so each comparison
-# gets a scaled chi-square difference test. Read the tests together with
+# Behaviour residuals are added only among `res_scope` (the belief scales by
+# default). Residuals between belief and INT items would absorb exactly the
+# belief-intention links the hypotheses test.
+#
+# M1, M2, M3 are nested in M0, M0 is nested in M4, and M6 is nested in M4, so
+# each comparison gets a scaled chi-square difference test. Read the tests together with
 # CFI/RMSEA/SRMR changes and with theory: with N of 200-400, small
 # differences are often significant.
 #
@@ -23,18 +29,10 @@ source("Model Test/Common.R")
 
 alt_scope <- tpb            # factors in the block
 run_esem  <- FALSE
-behaviour_file <- "behaviour_map.csv"   # same map as Behavior_Factor_CFA.R (mode or group, item, behaviour)
+res_scope <- belief         # factors whose items get behaviour residuals
 out_dir   <- file.path("alternatives_results", sample_tag())
 
-# ---- behaviour map -----------------------------------------------------------
-read_behaviours <- function() {
-  if (!file.exists(behaviour_file)) return(NULL)
-  b <- read.csv(behaviour_file, stringsAsFactors = FALSE, strip.white = TRUE)
-  if (!"group" %in% names(b) && "mode" %in% names(b)) names(b)[names(b) == "mode"] <- "group"
-  b$group <- tolower(b$group)
-  b[!is.na(b$behaviour) & nzchar(b$behaviour), ]
-}
-
+# ---- behaviour map (read_behaviours, behaviour_residuals: see Common.R) ----
 write_behaviour_template <- function(all_fs) {
   rows <- lapply(names(all_fs), function(g) {
     fs <- all_fs[[g]]
@@ -47,23 +45,6 @@ write_behaviour_template <- function(all_fs) {
   cat("\nWrote Model Test/behaviour_map_TEMPLATE.csv. Fill in 'behaviour' (e.g. speed, phone,",
       "\nhelmet, alertness) using the questionnaire, save as", behaviour_file,
       "and rerun to get M4.\n")
-}
-
-behaviour_residuals <- function(fs, bmap, g) {
-  if (is.null(bmap)) return(character(0))
-  b <- bmap[bmap$group == tolower(g), ]
-  fac_of <- setNames(rep(names(fs), lengths(fs)), unlist(fs, use.names = FALSE))
-  b <- b[b$item %in% names(fac_of), ]
-  out <- character(0)
-  for (beh in unique(b$behaviour)) {
-    its <- b$item[b$behaviour == beh]
-    if (length(its) < 2) next
-    pr <- combn(its, 2)
-    for (j in seq_len(ncol(pr)))
-      if (fac_of[[pr[1, j]]] != fac_of[[pr[2, j]]])
-        out <- c(out, paste(pr[1, j], "~~", pr[2, j]))
-  }
-  out
 }
 
 # ---- model syntax ------------------------------------------------------------
@@ -79,7 +60,7 @@ esem_syntax <- function(fs) {
 
 # ---- run ---------------------------------------------------------------------
 bmap <- read_behaviours()
-fits <- lrts <- cors <- esem_load <- list()
+fits <- lrts <- cors <- esem_load <- coreload <- list()
 all_fs <- list()
 
 for (g in groups) {
@@ -100,10 +81,12 @@ for (g in groups) {
     models$second_order <- paste0(make_syntax(fs), "\nCORE =~ ",
                                   paste(core, collapse = " + "))
   }
-  res <- behaviour_residuals(fs, bmap, g)
+  res <- behaviour_residuals(fs, bmap, g, scope = res_scope)
   if (length(res)) {
     models$behaviour_res <- paste(c(make_syntax(fs), res), collapse = "\n")
-    cat("  M4 adds", length(res), "behaviour-based residual correlations\n")
+    if (!is.null(models$second_order))
+      models$second_order_res <- paste(c(models$second_order, res), collapse = "\n")
+    cat("  M4/M6 add", length(res), "behaviour-based residual correlations\n")
   }
 
   fitted <- list()
@@ -111,7 +94,15 @@ for (g in groups) {
     r <- fit_lav(models[[m]], dat, items)
     fitted[[m]] <- r$fit
     fits[[paste(g, m)]] <- fit_summary(r, g, m)
-    cat(sprintf("  %-14s %s\n", m, if (is.null(r$fit)) "FAILED" else "ok"))
+    cat(sprintf("  %-16s %s\n", m, if (is.null(r$fit)) "FAILED" else "ok"))
+    if (!is.null(r$fit) && grepl("^second_order", m)) {
+      st <- standardizedSolution(r$fit)
+      st <- st[st$op == "=~" & st$lhs == "CORE", c("rhs", "est.std", "ci.lower", "ci.upper")]
+      if (nrow(st)) coreload[[paste(g, m)]] <- data.frame(group = g, model = m,
+        facet = st$rhs, loading = round(st$est.std, 3),
+        ci_lower = round(st$ci.lower, 3), ci_upper = round(st$ci.upper, 3),
+        unique_share = round(1 - st$est.std^2, 3), stringsAsFactors = FALSE)
+    }
     if (!is.null(r$fit)) {
       R <- safe(lavInspect(r$fit, "cor.lv"), NULL)
       if (!is.null(R) && nrow(R) > 1) {
@@ -125,7 +116,8 @@ for (g in groups) {
 
   # nested comparisons: (restricted, general)
   pairs <- list(c("merge_PBC_HAB", "five_factor"), c("merge_core", "five_factor"),
-                c("second_order", "five_factor"), c("five_factor", "behaviour_res"))
+                c("second_order", "five_factor"), c("five_factor", "behaviour_res"),
+                c("second_order_res", "behaviour_res"))
   for (p in pairs) {
     if (is.null(fitted[[p[1]]]) || is.null(fitted[[p[2]]])) next
     t <- safe(lavTestLRT(fitted[[p[2]]], fitted[[p[1]]]), NULL)
@@ -157,6 +149,7 @@ write_csv(bind_rows(fits),      out_dir, "fit")
 write_csv(bind_rows(lrts),      out_dir, "lrt")
 write_csv(bind_rows(cors),      out_dir, "factor_cor")
 write_csv(bind_rows(esem_load), out_dir, "esem_loadings")
+write_csv(bind_rows(coreload),  out_dir, "core_loadings")
 
 f <- bind_rows(fits)
 if (!is.null(f)) {
@@ -164,6 +157,9 @@ if (!is.null(f)) {
   print(f[, c("group", "model", "n_used", "cfi.scaled", "rmsea.scaled", "srmr",
               "admissible")], row.names = FALSE)
 }
+cl <- bind_rows(coreload)
+if (!is.null(cl)) { cat("\nSecond-order loadings on CORE (unique_share = facet variance not shared with CORE):\n")
+                    print(cl, row.names = FALSE) }
 l <- bind_rows(lrts)
 if (!is.null(l)) { cat("\nNested tests (significant = restriction worsens fit):\n")
                    print(l, row.names = FALSE) }

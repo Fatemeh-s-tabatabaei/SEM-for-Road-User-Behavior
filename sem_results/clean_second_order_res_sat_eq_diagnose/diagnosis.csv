@@ -1,0 +1,5 @@
+"group","model","n_used","converged","admissible","cfi.scaled","rmsea.scaled","srmr","se_ok","n_negative_var","max_abs_beta"
+"Motorcyclist","measurement",200,TRUE,TRUE,0.9593,0.0369,0.0925,TRUE,0,NA
+"Motorcyclist","INT_part",200,TRUE,TRUE,0.9637,0.0402,0.0879,TRUE,0,0.767
+"Motorcyclist","RBF_part",201,TRUE,TRUE,0.9628,0.0421,0.0902,TRUE,0,1.073
+"Motorcyclist","full",200,TRUE,TRUE,0.9593,0.0369,0.0924,TRUE,0,1.107

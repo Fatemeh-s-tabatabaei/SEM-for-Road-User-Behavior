@@ -1,0 +1,5 @@
+"group","lhs","est.std","se","pvalue","ci.lower","ci.upper"
+"Cyclist","SA_via_PA_to_INT",-0.0249367838486983,NA,NA,NA,NA
+"Pedestrian","SA_via_PA_to_INT",0.00271596657286487,0.0359899542431142,0.939845082819203,-0.0678230475488835,0.0732549806946133
+"Driver","SA_via_PA_to_INT",-0.287651485658636,NA,NA,NA,NA
+"Motorcyclist","SA_via_PA_to_INT",-0.45863051721376,NA,NA,NA,NA

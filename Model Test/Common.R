@@ -132,6 +132,40 @@ find_factors <- function(dat, g, use_items = TRUE, reversed = include_reversed,
   out
 }
 
+# ---- Behaviour map (the questionnaire grid) -----------------------------------
+# behaviour_map.csv tags each item with the behaviour its wording names
+# (speed, phone, ...). Shared by Alternatives.R and SEM.R.
+set_default("behaviour_file", "behaviour_map.csv")
+set_default("belief", c("ATT", "SN", "PBC", "HAB"))   # where the overlap problem is
+
+read_behaviours <- function(path = behaviour_file) {
+  if (!file.exists(path)) return(NULL)
+  b <- read.csv(path, stringsAsFactors = FALSE, strip.white = TRUE)
+  if (!"group" %in% names(b) && "mode" %in% names(b)) names(b)[names(b) == "mode"] <- "group"
+  b$group <- tolower(b$group)
+  b[!is.na(b$behaviour) & nzchar(b$behaviour), ]
+}
+
+# Residual correlations between items of DIFFERENT factors in `scope` that ask
+# about the same behaviour. Fixed by wording in advance, not chosen from the data.
+behaviour_residuals <- function(fs, bmap, g, scope = names(fs)) {
+  if (is.null(bmap)) return(character(0))
+  fs <- fs[names(fs) %in% scope]
+  if (!length(fs)) return(character(0))
+  fac_of <- setNames(rep(names(fs), lengths(fs)), unlist(fs, use.names = FALSE))
+  b <- bmap[bmap$group == tolower(g) & bmap$item %in% names(fac_of), ]
+  out <- character(0)
+  for (beh in unique(b$behaviour)) {
+    its <- unique(b$item[b$behaviour == beh])
+    if (length(its) < 2) next
+    pr <- combn(its, 2)
+    for (j in seq_len(ncol(pr)))
+      if (fac_of[[pr[1, j]]] != fac_of[[pr[2, j]]])
+        out <- c(out, paste(pr[1, j], "~~", pr[2, j]))
+  }
+  out
+}
+
 # ---- Models -----------------------------------------------------------------
 make_syntax <- function(fs) {
   paste(sprintf("%s =~ %s", names(fs),

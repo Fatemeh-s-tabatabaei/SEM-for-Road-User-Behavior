@@ -5,11 +5,14 @@ cyclist,rbf1
 cyclist,rbf2
 cyclist,sn4_r
 driver,att2
+driver,att6
 driver,hab5
 driver,pa3
 driver,pbc2
+driver,rbf1
 driver,rbf3
 driver,sa7
 driver,sa9
 motorcyclist,sn4_r
 pedestrian,hab5
+pedestrian,rbf1

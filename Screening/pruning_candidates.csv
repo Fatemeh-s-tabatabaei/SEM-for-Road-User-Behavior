@@ -1,37 +1,40 @@
 group,factor,item,rule,evidence,proposal
-cyclist,ATT,att3,R2 near-duplicate pair,"att2~~att3 MI 59, sepc 0.54 (block_tpb); loadings 0.76 / 0.71",drop candidate
-cyclist,PBC,pbc2,R2 near-duplicate pair,"pbc2~~pbc3 MI 84, sepc 0.76 (tier1); loadings 0.81 / 0.84",drop candidate
+cyclist,ATT,att3,R2 near-duplicate pair,"att2~~att3 MI 59, sepc 0.54 (M0_block_tpb); loadings 0.76 / 0.71",drop candidate
+cyclist,PBC,pbc2,R2 near-duplicate pair,"pbc2~~pbc3 MI 86, sepc 0.77 (M0_tier1_noRBF); loadings 0.81 / 0.84",drop candidate
 cyclist,RBF,rbf1,R1 weak item,item-rest 0.09 to 0.12; loading 0.10,drop candidate
 cyclist,RBF,rbf2,R1 weak item,item-rest 0.24 to 0.29; loading 0.38,drop candidate
-cyclist,SN,sn4_r,R1 weak item,item-rest 0.25 to 0.27; no CFA loading,drop candidate
-driver,ATT,att2,R2 near-duplicate pair,"att2~~att3 MI 74, sepc 0.58 (tier1); loadings 0.75 / 0.82",drop candidate
-driver,HAB,hab5,R2 near-duplicate pair,"hab5~~hab6 MI 211, sepc 1.31 (block_tpb); loadings 0.87 / 0.91",drop candidate
-driver,PA,pa3,R2 near-duplicate pair,"pa2~~pa3 MI 51, sepc 0.59 (tier1); loadings 0.74 / 0.73",drop candidate
-driver,PBC,pbc2,R2 near-duplicate pair,"pbc2~~pbc3 MI 96, sepc 0.90 (tier1); loadings 0.84 / 0.89",drop candidate
-driver,RBF,rbf3,R1 weak item,item-rest 0.28 to 0.29; loading 0.40,drop candidate
-driver,SA,sa7,R2 near-duplicate pair,"sa6~~sa7 MI 51, sepc 1.21 (block_acceptance); loadings 0.94 / 0.94",drop candidate
-driver,SA,sa9,R2 near-duplicate pair,"sa8~~sa9 MI 78, sepc 1.25 (tier1); loadings 0.94 / 0.91",drop candidate
-motorcyclist,SN,sn4_r,R1 weak item,item-rest 0.21 to 0.25; no CFA loading,drop candidate
-pedestrian,HAB,hab5,R1 weak item,item-rest 0.23 to 0.24; loading 0.29,drop candidate
+cyclist,SN,sn4_r,R1 weak item,item-rest 0.25 to 0.27; loading 0.29,drop candidate
 cyclist,AE,aenf1,R4 not a reflective scale,item-rest -0.17 to -0.03,exclude from CFA
 cyclist,AE,aenf2,R4 not a reflective scale,item-rest -0.06 to 0.03,exclude from CFA
 cyclist,AE,aenf3,R4 not a reflective scale,item-rest -0.01 to 0.01,exclude from CFA
 cyclist,AE,aenf4,R4 not a reflective scale,item-rest 0.08 to 0.14,exclude from CFA
 cyclist,PENF,penf1,R1 weak item,item-rest 0.28 to 0.29; loading 0.45,review
+driver,ATT,att2,R2 near-duplicate pair,"att2~~att3 MI 74, sepc 0.58 (M0_tier1); loadings 0.75 / 0.82",drop candidate
+driver,ATT,att6,R2 near-duplicate pair,"att5~~att6 MI 54, sepc 0.85 (M0_one_ATT); loadings 0.78 / 0.73",drop candidate
+driver,HAB,hab5,R2 near-duplicate pair,"hab5~~hab6 MI 211, sepc 1.31 (M0_block_tpb); loadings 0.87 / 0.91",drop candidate
+driver,PA,pa3,R2 near-duplicate pair,"pa2~~pa3 MI 83, sepc 0.83 (M0_one_PA); loadings 0.74 / 0.73",drop candidate
+driver,PBC,pbc2,R2 near-duplicate pair,"pbc2~~pbc3 MI 96, sepc 0.90 (M0_tier1); loadings 0.84 / 0.89",drop candidate
+driver,RBF,rbf1,R2 near-duplicate pair,"rbf1~~rbf2 MI 65, sepc 0.66 (M0_one_RBF); loadings 0.55 / 0.63",drop candidate
+driver,RBF,rbf3,R1 weak item,item-rest 0.28 to 0.29; loading 0.40,drop candidate
+driver,SA,sa7,R2 near-duplicate pair,"sa6~~sa7 MI 51, sepc 1.21 (M0_block_acceptance); loadings 0.94 / 0.94",drop candidate
+driver,SA,sa9,R2 near-duplicate pair,"sa8~~sa9 MI 78, sepc 1.25 (M0_tier1); loadings 0.94 / 0.91",drop candidate
 driver,AE,aenf1,R4 not a reflective scale,item-rest 0.06 to 0.07,exclude from CFA
 driver,AE,aenf2,R4 not a reflective scale,item-rest 0.17 to 0.19,exclude from CFA
 driver,AE,aenf3,R4 not a reflective scale,item-rest -0.00 to 0.01,exclude from CFA
 driver,AE,aenf4,R4 not a reflective scale,item-rest 0.08 to 0.09,exclude from CFA
-driver,SN,sn4_r,R1 weak item,item-rest 0.04 to 0.07; no CFA loading,blocked (would leave 3 items)
+driver,SN,sn4_r,R1 weak item,item-rest 0.04 to 0.07; loading 0.01,blocked (would leave 3 items)
+motorcyclist,SN,sn4_r,R1 weak item,item-rest 0.21 to 0.25; loading 0.22,drop candidate
 motorcyclist,AE,aenf1,R4 not a reflective scale,item-rest -0.14 to -0.14,exclude from CFA
 motorcyclist,AE,aenf2,R4 not a reflective scale,item-rest -0.11 to -0.08,exclude from CFA
 motorcyclist,AE,aenf3,R4 not a reflective scale,item-rest -0.13 to -0.12,exclude from CFA
 motorcyclist,AE,aenf4,R4 not a reflective scale,item-rest -0.07 to -0.07,exclude from CFA
 motorcyclist,PENF,penf1,R1 weak item,item-rest 0.24 to 0.28; loading 0.39,blocked (would leave 3 items)
+pedestrian,HAB,hab5,R1 weak item,item-rest 0.23 to 0.24; loading 0.29,drop candidate
+pedestrian,RBF,rbf1,R2 near-duplicate pair,"rbf1~~rbf2 MI 80, sepc 0.49 (M0_one_RBF); loadings 0.37 / 0.41",drop candidate
 pedestrian,AE,aenf1,R4 not a reflective scale,item-rest 0.00 to 0.01,exclude from CFA
 pedestrian,AE,aenf2,R4 not a reflective scale,item-rest 0.10 to 0.12,exclude from CFA
 pedestrian,AE,aenf3,R4 not a reflective scale,item-rest -0.05 to -0.05,exclude from CFA
 pedestrian,AE,aenf4,R4 not a reflective scale,item-rest 0.02 to 0.05,exclude from CFA
 pedestrian,PENF,penf1,R1 weak item,item-rest 0.19 to 0.21; loading 0.31,blocked (would leave 3 items)
 pedestrian,RBF,rbf1,R1 weak item,item-rest 0.29 to 0.31; loading 0.37,review
-pedestrian,SN,sn5_r,R1 weak item,item-rest 0.22 to 0.24; no CFA loading,blocked (would leave 3 items)
+pedestrian,SN,sn5_r,R1 weak item,item-rest 0.22 to 0.24; loading 0.25,blocked (would leave 3 items)

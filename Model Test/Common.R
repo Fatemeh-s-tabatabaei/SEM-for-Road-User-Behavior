@@ -14,6 +14,9 @@ set_default <- function(name, value) {
 # ---- Settings ---------------------------------------------------------------
 set_default("data_dir", "ItemPrep")
 set_default("groups",   c("Cyclist", "Pedestrian", "Driver", "Motorcyclist"))
+# Constructs screened in Correlations.py / Pruningcandidates.py (rule R4) and
+# excluded from all later analysis: binary items, item-rest -.14 to .19 in every group.
+set_default("excluded_prefixes", "aenf")
 
 # Sample definition
 #   "all"          every row in the ready file
@@ -32,7 +35,7 @@ set_default("sl_max_blocks", NA)
 set_default("include_reversed", TRUE)
 
 # Approved item drops: CSV with columns group,item. Missing file = no drops.
-set_default("drop_file", file.path("Model Test", "drop_items.csv"))
+set_default("drop_file", file.path("Screening", "drop_items_CONFIRMED.csv"))
 
 set_default("missing_method", "listwise")
 set_default("min_items", 3)
@@ -84,8 +87,13 @@ read_group <- function(g, def = sample_def, sl_max = sl_max_blocks) {
 }
 
 read_drops <- function(path = drop_file) {
-  if (is.null(path) || !file.exists(path))
+  if (is.null(path))
     return(data.frame(group = character(0), item = character(0)))
+  if (!file.exists(path)) {
+    warning("drop file not found: ", normalizePath(path, mustWork = FALSE),
+            " -- no item drops applied from file", call. = FALSE)
+    return(data.frame(group = character(0), item = character(0)))
+  }
   x <- read.csv(path, stringsAsFactors = FALSE, strip.white = TRUE)
   stopifnot(all(c("group", "item") %in% names(x)))
   x$group <- tolower(x$group)
@@ -117,6 +125,7 @@ find_factors <- function(dat, g, use_items = TRUE, reversed = include_reversed,
   out <- list()
   for (nm in names(factor_prefix)) {
     p   <- factor_prefix[[nm]]
+    if (p %in% excluded_prefixes) next
     its <- grep(paste0("^", p, "[0-9]+$"), names(dat), value = TRUE)
     if (use_items) {
       rev <- grep(paste0("^", p, "[0-9]+_r$"), names(dat), value = TRUE)

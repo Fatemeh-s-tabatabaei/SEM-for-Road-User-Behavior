@@ -1,3 +1,9 @@
+"""
+Run a psychometric item-rest correlation screening (also known as corrected item-total correlation) 
+across survey datasets to evaluate the internal consistency of multi-item psychological or behavioral scales 
+before running modeling (CFA or SEM)
+"""
+
 import argparse
 import re
 import sys

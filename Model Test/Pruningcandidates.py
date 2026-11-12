@@ -1,7 +1,7 @@
 """PruningCandidates.py -- apply a pruning rule, written down in advance, to the
 screening and CFA output, and propose (not apply) item drops.
 
-Rules (change the constants below BEFORE looking at the results, and report them):
+Rules (constants can be adjusted and the outputs shall be interpreted):
   R1 weak item     single-factor loading < LOW_LOADING and item-rest r < WEAK_R
                    in every screening sample  -> drop candidate
                    only one of the two        -> review
@@ -16,11 +16,14 @@ Rules (change the constants below BEFORE looking at the results, and report them
                    reflective scale -> keep out of CFA, use as single items
 
 Every proposal needs a content check: an item that is weak but essential to
-what the construct means should stay. Approve by copying rows to
+what the construct means should stay. Approved item rows to drop are copied to
 drop_items.csv (columns group,item), which common.R reads.
 
 Inputs : Screening/item_rest.csv, cfa_results/<Group>/{loadings,modindices}.csv
-Outputs: Screening/pruning_candidates.csv, Screening/drop_items_PROPOSED.csv
+Outputs: Screening/pruning_candidates.csv, Screening/drop_items_PROPOSED.csv\
+
+Running order:
+CFA.R  →  Pruningcandidates.py  →  review proposals  →  fill drop_items.csv  →  CFA.R again
 """
 import argparse
 import re
@@ -29,7 +32,7 @@ from pathlib import Path
 import pandas as pd
 
 SCREEN = Path("Screening") / "item_rest.csv"
-CFA_DIR = Path("cfa_results")
+CFA_DIR = Path("cfa_results") / "no_dups"
 OUT = Path("Screening") / "pruning_candidates.csv"
 OUT_DROP = Path("Screening") / "drop_items_PROPOSED.csv"
 
@@ -90,9 +93,16 @@ def main():
 
     load = load_cfa("loadings")
     if not load.empty:
-        one = load[load["model"].str.startswith("one_")]
-        one = one[["group", "item", "std_loading"]].drop_duplicates(["group", "item"])
+        one = load[load["model"].str.match(r"^M[01]_one_")].copy()
+        one["_pref"] = one["model"].str.startswith("M0")
+        one = (one.sort_values("_pref", ascending=False)
+                  [["group", "item", "std_loading"]]
+                  .drop_duplicates(["group", "item"]))
         ir = ir.merge(one, on=["group", "item"], how="left")
+        no_cfa = sorted(set(ir["group"]) - set(one["group"]))
+        if no_cfa:
+            print(f"WARNING: no CFA loadings for {no_cfa}: "
+                  "R1 uses item-rest only, R2 skipped")
     else:
         ir["std_loading"] = float("nan")
         print("No cfa_results/*/loadings.csv found: R1 uses item-rest only")
@@ -118,6 +128,7 @@ def main():
 
     # R2
     mi = load_cfa("modindices")
+    mi = mi[mi["model"].str.startswith("M0_")] if not mi.empty else mi
     if not mi.empty:
         res = mi[(mi["op"] == "~~") & (mi["mi"] >= MI_MIN) & (mi["sepc.all"].abs() >= SEPC_MIN)]
         res = res[res["lhs"].map(factor_of) == res["rhs"].map(factor_of)]

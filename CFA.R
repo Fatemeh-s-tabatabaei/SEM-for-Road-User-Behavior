@@ -3,14 +3,12 @@ library(lavaan)
 # 1. Settings -----------------------------------------------------------
 data_dir <- "ItemPrep"            # *_items_ready.csv (merged categories)
 raw_dir  <- "CleaningResults"     # *_model_data.csv (original 1-5 codes, for rbf_mean)
-out_dir  <- "cfa_results_v2"
-groups   <- "Cyclist"             # respecification is set up for cyclists only
+out_dir  <- "cfa_results"
+groups   <- c("Cyclist", "Pedestrian", "Driver", "Motorcyclist")
 id_col   <- "resp_id"             # respondent id, written next to rbf_mean
 
-sample_def     <- "no_dups"       # "all" / "no_dups" / "adults"
 sl_max_blocks  <- NA              # e.g. 5: also drop sl_blocks >= 5 (sensitivity)
 include_reversed <- TRUE          # use *_r items (the old regex skipped them)
-drop_file      <- "drop_items.csv"  # approved item drops (group,item); optional
 missing_method <- "listwise"
 min_items   <- 3
 min_loading <- 0.50
@@ -31,24 +29,13 @@ blocks <- list(
 tier1 <- c("ATT", "SN", "PBC", "HAB", "INT", "SA", "PA", "RBF", "NBV")
 
 # 2. Respecification (numbers refer to the CFA notes) -------------------
-# Reversed items made in item prep (named *_r) that join a factor
-add_items <- list(
-  Cyclist = list(SN = "sn4_r")      # #8 "My family complies with traffic laws", reversed
-)
-# Items removed from the factors
-drop_items <- list(
-  Cyclist = c("sn5",                # #7 placed among habit items, cross-loads on HAB
-              "pbc7", "hab7",       # #3 helmet items with the largest cross-construct MIs
-              "att3",               # #4 near-duplicate of att2 ("lower speeds wasting time")
-              "rbf1",               # #5 helmet non-use, loading ~ .10 (still in rbf_mean)
-              "penf1")              # #9 weakest PENF item
-)
+
 # Residual covariances (used only if both items are in the model)
 res_cov <- list(
-  Cyclist = c("hab5 ~~ hab6",                     # #4 talk on phone / check messages
-              "pbc2 ~~ pbc3",                     # #4 control at any speed / sharp turns at speed
-              "att4 ~~ int4",                     # #3 helmet unnecessary / intend to wear helmet
-              paste0("sa", 1:6, " ~~ pa", 1:6))   # #3 SA and PA items are parallel by design
+  Cyclist = c("hab5 ~~ hab6",
+              "att4 ~~ int4",
+              paste0("sa", 1:6, " ~~ pa", 1:6)),
+  Pedestrian = "rbf1 ~~ rbf2"
 )
 # If PENF still has AVE below min_ave without penf1, PENF is dropped (#9)
 
@@ -231,6 +218,7 @@ for (g in groups) {
   }
 
   for (s in names(steps)) {
+    if (s == "M2" && is.null(res_cov[[g]])) next
     sp <- steps[[s]]
     fs <- find_factors(dat, g, sp[["items"]])
     cl <- if (sp[["cov"]]) res_cov[[g]] else NULL
@@ -245,17 +233,17 @@ for (g in groups) {
                   if (rho < 0) "  <- NEGATIVE, check the reversal" else ""))
     }
 
-    # Stage 1: one factor at a time
-    for (f in names(fs)) record(paste0(s, "_one_", f), fs[f], cl)
+    # # Stage 1: one factor at a time
+    # for (f in names(fs)) record(paste0(s, "_one_", f), fs[f], cl)
 
-    # #9: PENF still weak without penf1 -> drop the whole scale
-    if (sp[["items"]] && "PENF" %in% names(fs)) {
-      ave <- res$rel[[paste0(s, "_one_PENF")]]$ave
-      if (!is.null(ave) && ave < min_ave) {
-        cat(sprintf("  PENF AVE = %.2f < %.2f without penf1 -> PENF dropped\n", ave, min_ave))
-        fs$PENF <- NULL
-      }
-    }
+    # # #9: PENF still weak without penf1 -> drop the whole scale
+    # if (sp[["items"]] && "PENF" %in% names(fs) && "penf1" %in% drop_items[[g]]) {
+    #   ave <- res$rel[[paste0(s, "_one_PENF")]]$ave
+    #   if (!is.null(ave) && ave < min_ave) {
+    #     cat(sprintf("  PENF AVE = %.2f < %.2f without penf1 -> PENF dropped\n", ave, min_ave))
+    #     fs$PENF <- NULL
+    #   }
+    # }
 
     # Stage 2: blocks, Tier 1, Tier 1 without the RBF factor
     for (b in names(blocks)) {

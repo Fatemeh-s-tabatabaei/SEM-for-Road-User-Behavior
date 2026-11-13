@@ -1,0 +1,20 @@
+## Models:
+- **M0**: original items.
+- **M1**: confirmed drops applied.
+- **M2**: M1 plus residual covariances (cyclists and pedestrians only).
+
+## What we found
+
+1. Scales are reliable, but RBF and PENF are weak (AVE below .50) in all four groups.
+2. ATT, PBC and HAB overlap strongly in every group (correlations .81 to .93). The confirmed drops did not fix this; for drivers it got worse (.81 to .91).
+3. Cyclists: the confirmed drops barely improve fit.
+4. Pedestrians: M1 fits worse than M0 because reversed items (sn4_r, sn5_r, sa6_r, pa6_r) entered the model.
+5. Drivers: sn4_r is still in the model and does not fit.
+6. Motorcyclists: M1 is the same as M0, because the only drop (sn4_r) is not in M0. Item sn5 cross-loads badly.
+
+## Still to do
+
+1. Remove the sa6 and pa6 reversal in `Item_Preparation.py` and drop both items.
+2. Decide on pedestrian sn4_r and sn5_r, and driver sn4_r.
+3. Decide on the cross-loading items (cyclist sn5, pbc7, hab7; motorcyclist sn5).
+4. Re-run `CFA.R`, then the other scripts.

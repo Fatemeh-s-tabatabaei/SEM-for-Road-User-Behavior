@@ -118,8 +118,6 @@ Items are tied to specific behaviours (alertness, speed, phone use, helmet/seatb
 └── sem_results/                 Structural-model output
 ```
 
-> **TODO:** adjust the tree above to match the actual folder layout (some scripts may live in the repo root).
-
 ## Requirements
 
 - **R** with `lavaan` (≥ 0.6-13 if you enable the ESEM option in `Alternatives.R`) and `dplyr`
@@ -230,11 +228,10 @@ Output folder names encode the settings, e.g. `sem_results/clean_second_order_re
 - A few items fit poorly: helmet/seatbelt items within risky behaviour (RBF) and one enforcement item (PENF).
 - **Attitude, perceived control and habit are too highly correlated to separate** (for example, cyclist PBC–HAB r ≈ .90, ATT–HAB r ≈ .89). The likely cause is the questionnaire design: the same behaviours are asked about in every scale, so answers about one behaviour hang together regardless of construct. This motivates the second-order CORE factor and the behaviour-residual models in `Alternatives.R` and `SEM.R`.
 
-> **TODO:** add a short summary of the structural results once the final model is chosen.
 
 ## Data availability, citation, license
 
-- **Data:** TODO (state whether the survey data are public, available on request, or restricted).
-- **Citation:** TODO (paper or preprint reference).
-- **License:** TODO.
-- **Contact:** TODO.
+- **Data:** 
+- **Citation:** 
+- **License:**
+- **Contact:**

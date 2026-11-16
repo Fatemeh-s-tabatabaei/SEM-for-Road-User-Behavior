@@ -10,9 +10,11 @@ driver,hab5
 driver,pa3
 driver,pbc2
 driver,rbf1
-driver,rbf3
 driver,sa7
 driver,sa9
 motorcyclist,sn4_r
 pedestrian,hab5
+pedestrian,pa6
 pedestrian,rbf1
+pedestrian,sa6
+pedestrian,sn4_r

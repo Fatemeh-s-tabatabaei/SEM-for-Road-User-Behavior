@@ -1,0 +1,12 @@
+group,item1,item2,reason,status
+cyclist,att2,att3,near-duplicate pair (MI 59; loadings .76/.71),exploratory
+cyclist,pbc2,pbc3,near-duplicate pair (MI 86; loadings .81/.84),exploratory
+driver,att2,att3,near-duplicate pair (MI 75; loadings .75/.82),exploratory
+driver,att5,att6,near-duplicate pair (MI 54; loadings .77/.72),exploratory
+driver,hab5,hab6,near-duplicate pair (MI 214; loadings .87/.91),exploratory
+driver,pa2,pa3,near-duplicate pair (MI 83; loadings .73/.72),exploratory
+driver,pbc2,pbc3,near-duplicate pair (MI 97; loadings .83/.89),exploratory
+driver,rbf1,rbf2,near-duplicate pair (MI 67; loadings .54/.63),exploratory
+driver,sa6,sa7,near-duplicate pair (MI 53; loadings .94/.94),exploratory
+driver,sa8,sa9,near-duplicate pair (MI 78; loadings .94/.91),exploratory
+pedestrian,rbf1,rbf2,near-duplicate pair (MI 80; loadings .37/.41); rbf1 kept for content,exploratory

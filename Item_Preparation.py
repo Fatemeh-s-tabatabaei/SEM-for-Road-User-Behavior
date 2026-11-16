@@ -72,8 +72,6 @@ REVERSE = {                      # mode -> {item: reason}
     "Pedestrian": {
         "sn5": "My family follows traffic rules",
         "sn4": "friends wear light clothing: safe-worded",
-        "sa6": "Persian wording is the safe behaviour",
-        "pa6": "Persian wording is the safe behaviour",
     },
     "Driver": {"sn4": "My family complies with traffic laws"},
     "Motorcyclist": {"sn4": "My family follows traffic laws"},
@@ -94,8 +92,6 @@ def items_of(df: pd.DataFrame, prefix: str) -> list[str]:
     pat = re.compile(rf"^{prefix}\d+$")
     return [c for c in df.columns if pat.match(c)]
 
-def decided(mode: str, action: str) -> list[str]:
-    return [i for i, (a, _) in REVERSE.get(mode, {}).items() if a == action]
 
 # ===============================================================================================
 # new code here for preparation of items, merging categories, and checking item-rest correlations

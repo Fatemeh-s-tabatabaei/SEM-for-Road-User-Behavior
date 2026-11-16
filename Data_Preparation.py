@@ -154,8 +154,6 @@ REVERSE = {                      # mode -> {item: reason}
     "Pedestrian": {
         "sn5": "My family follows traffic rules",
         "sn4": "friends wear light clothing: safe-worded",
-        "sa6": "Persian wording is the safe behaviour",
-        "pa6": "Persian wording is the safe behaviour",
     },
     "Driver": {"sn4": "My family complies with traffic laws"},
     "Motorcyclist": {"sn4": "My family follows traffic laws"},
@@ -178,11 +176,6 @@ def group_of(col: str) -> str | None:
     m = re.match(r"^([a-z]+)\d+(_r)?$", col) # the rest are matched by prefix + number, optionally with _r for reversed copies
     return m.group(1) if m else None
  
- 
-def decided(mode: str, action: str) -> list[str]:
-    """Items of a mode reverse category order."""
-    return [i for i, (a, _) in REVERSE.get(mode, {}).items() if a == action]
-
  
 def opposite_blocks(mode: str) -> list[str]:
     """Blocks that contain an opposite-worded item (from the "reverse" decisions)."""

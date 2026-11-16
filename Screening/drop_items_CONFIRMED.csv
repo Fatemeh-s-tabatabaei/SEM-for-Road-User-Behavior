@@ -1,15 +1,5 @@
-group,item
-cyclist,att3
-cyclist,pbc2
-cyclist,rbf2
-cyclist,sn4_r
-driver,att2
-driver,att6
-driver,hab5
-driver,pa3
-driver,pbc2
-driver,rbf1
-driver,sa7
-driver,sa9
-motorcyclist,sn4_r
-pedestrian,hab5
+group,item,reason
+pedestrian,hab5,R1 weak (loading 0.29); behaviour mostly not a deliberate safety choice
+pedestrian,pa6,wrong reversal; R1 weak (loading 0.29)
+pedestrian,sa6,wrong reversal; R1 weak (loading 0.08)
+pedestrian,sn4_r,R1 weak (loading 0.02); friends' clothing is not a deliberate safety choice

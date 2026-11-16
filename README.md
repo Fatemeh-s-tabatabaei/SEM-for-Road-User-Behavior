@@ -123,8 +123,6 @@ Items are tied to specific behaviours (alertness, speed, phone use, helmet/seatb
 - **R** with `lavaan` (≥ 0.6-13 if you enable the ESEM option in `Alternatives.R`) and `dplyr`
 - **Python 3** with `pandas` and `numpy`
 
-> **TODO:** pin versions (e.g. with `renv` / `requirements.txt`).
-
 ## How to run
 
 Run all commands from the repository root, since scripts use relative paths.
